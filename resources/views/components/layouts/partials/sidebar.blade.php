@@ -36,6 +36,18 @@
             </a>
         @endforeach
 
+        <a
+            href="{{ route('notificaciones.index') }}"
+            @class([
+                'flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                'bg-brand-600 text-white shadow-sm shadow-brand-200' => request()->routeIs('notificaciones.index'),
+                'text-gray-500 hover:bg-gray-50 hover:text-gray-700' => ! request()->routeIs('notificaciones.index'),
+            ])
+        >
+            <x-dynamic-component :component="'heroicon-' . (request()->routeIs('notificaciones.index') ? 's' : 'o') . '-bell'" class="w-5 h-5 shrink-0" />
+            <span>Notificaciones</span>
+        </a>
+
         @if ($vendor->is_admin)
             <a
                 href="{{ route('usuarios.index') }}"
