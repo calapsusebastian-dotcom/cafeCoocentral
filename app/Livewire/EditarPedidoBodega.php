@@ -123,6 +123,25 @@ class EditarPedidoBodega extends Component
         $this->cart[$key]['cantidad'] = max(1, $this->cart[$key]['cantidad'] - 1);
     }
 
+    /**
+     * Fires for any wire:model-bound "cart.*" update — used here to clamp a
+     * manually typed quantity to a minimum of 1.
+     */
+    public function updatedCart($value, $key): void
+    {
+        if (! str_ends_with($key, '.cantidad')) {
+            return;
+        }
+
+        $lineKey = substr($key, 0, -strlen('.cantidad'));
+
+        if (! isset($this->cart[$lineKey])) {
+            return;
+        }
+
+        $this->cart[$lineKey]['cantidad'] = max(1, (int) $value);
+    }
+
     public function actualizarMoliendaLinea(string $key, string $valor): void
     {
         if (! isset($this->cart[$key])) {

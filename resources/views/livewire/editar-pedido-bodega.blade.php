@@ -148,7 +148,12 @@
                                         <td class="px-1.5 py-3">
                                             <div class="inline-flex items-center rounded-lg border border-gray-200">
                                                 <button type="button" wire:click="decrementar('{{ $id }}')" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-brand-600">−</button>
-                                                <span class="w-8 text-center text-sm">{{ $line['cantidad'] }}</span>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    wire:model.live.debounce.500ms="cart.{{ $id }}.cantidad"
+                                                    class="w-10 text-center text-sm border-0 bg-transparent focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                />
                                                 <button type="button" wire:click="incrementar('{{ $id }}')" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-brand-600">+</button>
                                             </div>
                                         </td>

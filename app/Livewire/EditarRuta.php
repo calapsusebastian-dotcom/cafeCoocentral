@@ -278,6 +278,32 @@ class EditarRuta extends Component
         $this->clientes[$clienteKey]['productos'][$key]['cantidad'] = max(1, $cantidad);
     }
 
+    /**
+     * Fires for any wire:model-bound "clientes.*" update — used here to
+     * clamp a manually typed quantity to a minimum of 1.
+     */
+    public function updatedClientes($value, $key): void
+    {
+        if (! str_ends_with($key, '.cantidad')) {
+            return;
+        }
+
+        $path = substr($key, 0, -strlen('.cantidad'));
+        $segments = explode('.', $path, 3);
+
+        if (count($segments) !== 3 || $segments[1] !== 'productos') {
+            return;
+        }
+
+        [$clienteKey, , $lineKey] = $segments;
+
+        if (! isset($this->clientes[$clienteKey]['productos'][$lineKey])) {
+            return;
+        }
+
+        $this->clientes[$clienteKey]['productos'][$lineKey]['cantidad'] = max(1, (int) $value);
+    }
+
     public function actualizarMoliendaProducto(int $clienteId, string $key, string $valor): void
     {
         $clienteKey = (string) $clienteId;

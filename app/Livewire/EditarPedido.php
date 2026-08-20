@@ -271,6 +271,30 @@ class EditarPedido extends Component
         $this->cart[$key]['cantidad'] = max(1, $this->cart[$key]['cantidad'] - 1);
     }
 
+    /**
+     * Fires for any wire:model-bound "cart.*" update — used here to clamp a
+     * manually typed quantity between 1 and the stock still available for
+     * that product once the other lines of it are accounted for.
+     */
+    public function updatedCart($value, $key): void
+    {
+        if (! str_ends_with($key, '.cantidad')) {
+            return;
+        }
+
+        $lineKey = substr($key, 0, -strlen('.cantidad'));
+
+        if (! isset($this->cart[$lineKey])) {
+            return;
+        }
+
+        $productoId = $this->cart[$lineKey]['producto_id'];
+        $otrasLineas = collect($this->cart)->except($lineKey)->where('producto_id', $productoId)->sum('cantidad');
+        $maximo = max(1, $this->cart[$lineKey]['stock_disponible'] - $otrasLineas);
+
+        $this->cart[$lineKey]['cantidad'] = max(1, min((int) $value, $maximo));
+    }
+
     public function actualizarDescuentoLinea(string $key, $valor): void
     {
         if (! isset($this->cart[$key])) {

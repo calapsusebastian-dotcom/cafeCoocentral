@@ -117,7 +117,12 @@
                                                     </div>
                                                     <div class="inline-flex items-center rounded-lg border border-gray-200 bg-white shrink-0">
                                                         <button type="button" wire:click="decrementarProducto({{ $clienteId }}, '{{ $lineKey }}')" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-brand-600">−</button>
-                                                        <span class="w-6 text-center text-xs">{{ $producto['cantidad'] }}</span>
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            wire:model.live.debounce.500ms="clientes.{{ $clienteId }}.productos.{{ $lineKey }}.cantidad"
+                                                            class="w-9 text-center text-xs border-0 bg-transparent focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                        />
                                                         <button type="button" wire:click="incrementarProducto({{ $clienteId }}, '{{ $lineKey }}')" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-brand-600">+</button>
                                                     </div>
                                                 </div>
