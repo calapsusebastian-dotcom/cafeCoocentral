@@ -24,6 +24,7 @@ class Modulos
             'productos.index' => ['label' => 'Productos', 'icon' => 'cube'],
             'inventario.index' => ['label' => 'Inventario', 'icon' => 'archive-box'],
             'pedidos-bodega.index' => ['label' => 'Pedidos a Bodega', 'icon' => 'building-storefront'],
+            'bodegas.index' => ['label' => 'Bodegas', 'icon' => 'building-office-2'],
             'rutas.index' => ['label' => 'Rutas', 'icon' => 'map'],
             'reportes.index' => ['label' => 'Reportes', 'icon' => 'chart-bar'],
             'descuentos.index' => ['label' => 'Descuentos', 'icon' => 'tag'],

@@ -2,7 +2,6 @@
 
 namespace App\Livewire\PedidosBodega;
 
-use App\Models\Bodega;
 use App\Models\MovimientoInventario;
 use App\Models\Notificacion;
 use App\Models\PedidoBodega;
@@ -24,18 +23,6 @@ class Index extends Component
     public string $statusFiltro = '';
 
     public ?int $verPedidoId = null;
-
-    public bool $showBodegaModal = false;
-
-    public ?int $editingBodegaId = null;
-
-    public string $bodega_nombre = '';
-
-    public string $bodega_direccion = '';
-
-    public string $bodega_telefono = '';
-
-    public string $bodega_contacto = '';
 
     public function updatingSearch(): void
     {
@@ -67,12 +54,6 @@ class Index extends Component
         return $this->verPedidoId
             ? PedidoBodega::with(['items', 'bodega', 'usuario'])->find($this->verPedidoId)
             : null;
-    }
-
-    #[Computed]
-    public function bodegas()
-    {
-        return Bodega::orderBy('nombre')->get();
     }
 
     public function verPedido(int $id): void
@@ -145,54 +126,6 @@ class Index extends Component
         $pedido->update(['status' => 'cancelado']);
 
         session()->flash('success', "Pedido #{$pedido->numero} cancelado.");
-    }
-
-    public function nuevaBodega(): void
-    {
-        $this->reset(['editingBodegaId', 'bodega_nombre', 'bodega_direccion', 'bodega_telefono', 'bodega_contacto']);
-        $this->showBodegaModal = true;
-    }
-
-    public function editarBodega(int $id): void
-    {
-        $bodega = Bodega::findOrFail($id);
-        $this->editingBodegaId = $bodega->id;
-        $this->bodega_nombre = $bodega->nombre;
-        $this->bodega_direccion = $bodega->direccion ?? '';
-        $this->bodega_telefono = $bodega->telefono ?? '';
-        $this->bodega_contacto = $bodega->contacto ?? '';
-        $this->showBodegaModal = true;
-    }
-
-    public function guardarBodega(): void
-    {
-        $data = $this->validate([
-            'bodega_nombre' => 'required|string|max:255',
-            'bodega_direccion' => 'nullable|string|max:255',
-            'bodega_telefono' => 'nullable|string|max:50',
-            'bodega_contacto' => 'nullable|string|max:255',
-        ]);
-
-        Bodega::updateOrCreate(['id' => $this->editingBodegaId], [
-            'nombre' => $data['bodega_nombre'],
-            'direccion' => $data['bodega_direccion'],
-            'telefono' => $data['bodega_telefono'],
-            'contacto' => $data['bodega_contacto'],
-        ]);
-
-        $this->showBodegaModal = false;
-        session()->flash('success', 'Bodega guardada correctamente.');
-    }
-
-    public function toggleBodega(int $id): void
-    {
-        $bodega = Bodega::findOrFail($id);
-        $bodega->update(['activo' => ! $bodega->activo]);
-    }
-
-    public function eliminarBodega(int $id): void
-    {
-        Bodega::whereKey($id)->delete();
     }
 
     public function render()

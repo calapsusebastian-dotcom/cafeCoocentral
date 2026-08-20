@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Auth\Login;
+use App\Livewire\Bodegas;
 use App\Livewire\Clientes;
 use App\Livewire\Descuentos;
 use App\Livewire\EditarPedido;
@@ -58,6 +59,8 @@ Route::middleware('auth')->group(function () {
         Route::livewire('/pedidos-bodega/nuevo', NuevoPedidoBodega::class)->name('pedidos-bodega.nuevo');
         Route::livewire('/pedidos-bodega/{pedidoBodega}/editar', EditarPedidoBodega::class)->name('pedidos-bodega.editar');
     });
+
+    Route::livewire('/bodegas', Bodegas\Index::class)->name('bodegas.index')->middleware('modulo:bodegas.index');
 
     Route::middleware('modulo:rutas.index')->group(function () {
         Route::livewire('/rutas', Rutas\Index::class)->name('rutas.index');
