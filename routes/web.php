@@ -21,6 +21,7 @@ use App\Livewire\Reportes;
 use App\Livewire\Rutas;
 use App\Livewire\Usuarios;
 use App\Models\Pedido;
+use App\Models\PedidoBodega;
 use App\Models\Ruta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +59,11 @@ Route::middleware('auth')->group(function () {
         Route::livewire('/pedidos-bodega', PedidosBodega\Index::class)->name('pedidos-bodega.index');
         Route::livewire('/pedidos-bodega/nuevo', NuevoPedidoBodega::class)->name('pedidos-bodega.nuevo');
         Route::livewire('/pedidos-bodega/{pedidoBodega}/editar', EditarPedidoBodega::class)->name('pedidos-bodega.editar');
+        Route::get('/pedidos-bodega/{pedidoBodega}/imprimir', function (PedidoBodega $pedidoBodega) {
+            $pedidoBodega->load(['items', 'bodega', 'usuario']);
+
+            return view('pedidos-bodega.imprimir', ['pedidoBodega' => $pedidoBodega]);
+        })->name('pedidos-bodega.imprimir');
     });
 
     Route::livewire('/bodegas', Bodegas\Index::class)->name('bodegas.index')->middleware('modulo:bodegas.index');

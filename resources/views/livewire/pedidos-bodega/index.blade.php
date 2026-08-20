@@ -57,6 +57,9 @@
                                 <button type="button" wire:click="verPedido({{ $pedido->id }})" class="text-gray-400 hover:text-brand-600">
                                     <x-heroicon-o-eye class="w-4 h-4 inline" />
                                 </button>
+                                <a href="{{ route('pedidos-bodega.imprimir', $pedido) }}" target="_blank" title="Imprimir" class="text-gray-400 hover:text-brand-600">
+                                    <x-heroicon-o-printer class="w-4 h-4 inline" />
+                                </a>
                                 @if ($pedido->status === 'pendiente')
                                     <a href="{{ route('pedidos-bodega.editar', $pedido) }}" title="Editar" class="text-gray-400 hover:text-brand-600">
                                         <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
@@ -94,6 +97,10 @@
                         <h3 class="text-lg font-semibold text-gray-900">#{{ $this->pedidoDetalle->numero }}</h3>
                     </div>
                     <div class="flex items-center gap-3">
+                        <a href="{{ route('pedidos-bodega.imprimir', $this->pedidoDetalle) }}" target="_blank" class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 font-medium">
+                            <x-heroicon-o-printer class="w-4 h-4" />
+                            Imprimir
+                        </a>
                         @if ($this->pedidoDetalle->status === 'pendiente')
                             <a href="{{ route('pedidos-bodega.editar', $this->pedidoDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
                                 <x-heroicon-o-pencil-square class="w-4 h-4" />
