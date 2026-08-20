@@ -117,6 +117,10 @@ class Index extends Component
 
     public function cancelarPedido(int $id): void
     {
+        if (! Auth::user()->is_admin) {
+            return;
+        }
+
         $pedido = PedidoBodega::findOrFail($id);
 
         if ($pedido->status === 'recibido') {

@@ -90,23 +90,29 @@
                                     <button type="button" wire:click="marcarRecibida({{ $ruta->id }})" title="Marcar como recibida" class="text-gray-400 hover:text-brand-600">
                                         <x-heroicon-o-inbox-arrow-down class="w-4 h-4 inline" />
                                     </button>
-                                    <button type="button" wire:click="cancelarRuta({{ $ruta->id }})" title="Cancelar ruta" class="text-gray-400 hover:text-red-500">
-                                        <x-heroicon-o-x-circle class="w-4 h-4 inline" />
-                                    </button>
+                                    @if (auth()->user()->is_admin)
+                                        <button type="button" wire:click="cancelarRuta({{ $ruta->id }})" title="Cancelar ruta" class="text-gray-400 hover:text-red-500">
+                                            <x-heroicon-o-x-circle class="w-4 h-4 inline" />
+                                        </button>
+                                    @endif
                                 @elseif ($ruta->status === 'recibida')
                                     <button type="button" wire:click="abrirDespacho({{ $ruta->id }})" title="Despachar ruta" class="text-gray-400 hover:text-brand-600">
                                         <x-heroicon-o-truck class="w-4 h-4 inline" />
                                     </button>
-                                    <button type="button" wire:click="cancelarRuta({{ $ruta->id }})" title="Cancelar ruta" class="text-gray-400 hover:text-red-500">
-                                        <x-heroicon-o-x-circle class="w-4 h-4 inline" />
-                                    </button>
+                                    @if (auth()->user()->is_admin)
+                                        <button type="button" wire:click="cancelarRuta({{ $ruta->id }})" title="Cancelar ruta" class="text-gray-400 hover:text-red-500">
+                                            <x-heroicon-o-x-circle class="w-4 h-4 inline" />
+                                        </button>
+                                    @endif
                                 @elseif ($ruta->status === 'despachada')
                                     <button type="button" wire:click="marcarEntregada({{ $ruta->id }})" title="Marcar como entregada" class="text-gray-400 hover:text-brand-600">
                                         <x-heroicon-o-check-circle class="w-4 h-4 inline" />
                                     </button>
-                                    <button type="button" wire:click="cancelarRuta({{ $ruta->id }})" title="Cancelar ruta" class="text-gray-400 hover:text-red-500">
-                                        <x-heroicon-o-x-circle class="w-4 h-4 inline" />
-                                    </button>
+                                    @if (auth()->user()->is_admin)
+                                        <button type="button" wire:click="cancelarRuta({{ $ruta->id }})" title="Cancelar ruta" class="text-gray-400 hover:text-red-500">
+                                            <x-heroicon-o-x-circle class="w-4 h-4 inline" />
+                                        </button>
+                                    @endif
                                 @endif
                                 @if (auth()->user()->is_admin)
                                     <button

@@ -67,9 +67,11 @@
                                     <button type="button" wire:click="marcarRecibido({{ $pedido->id }})" wire:confirm="¿Marcar este pedido como recibido? Esto sumará las cantidades al inventario." title="Marcar como recibido" class="text-gray-400 hover:text-emerald-600">
                                         <x-heroicon-o-archive-box-arrow-down class="w-4 h-4 inline" />
                                     </button>
-                                    <button type="button" wire:click="cancelarPedido({{ $pedido->id }})" wire:confirm="¿Cancelar este pedido a bodega?" title="Cancelar pedido" class="text-gray-400 hover:text-red-500">
-                                        <x-heroicon-o-x-mark class="w-4 h-4 inline" />
-                                    </button>
+                                    @if (auth()->user()->is_admin)
+                                        <button type="button" wire:click="cancelarPedido({{ $pedido->id }})" wire:confirm="¿Cancelar este pedido a bodega?" title="Cancelar pedido" class="text-gray-400 hover:text-red-500">
+                                            <x-heroicon-o-x-mark class="w-4 h-4 inline" />
+                                        </button>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

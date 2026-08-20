@@ -196,6 +196,10 @@ class Index extends Component
 
     public function cancelarRuta(int $id): void
     {
+        if (! Auth::user()->is_admin) {
+            return;
+        }
+
         $ruta = Ruta::findOrFail($id);
 
         if ($ruta->status === 'entregada') {
