@@ -207,6 +207,18 @@ class Index extends Component
         session()->flash('success', "Ruta #{$ruta->numero} cancelada.");
     }
 
+    public function eliminarRuta(int $id): void
+    {
+        if (! Auth::user()->is_admin) {
+            return;
+        }
+
+        $ruta = Ruta::findOrFail($id);
+        $ruta->delete();
+
+        session()->flash('success', "Ruta #{$ruta->numero} eliminada.");
+    }
+
     public function abrirFactura(int $rutaClienteId): void
     {
         $rutaCliente = RutaCliente::findOrFail($rutaClienteId);

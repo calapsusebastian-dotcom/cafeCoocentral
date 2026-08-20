@@ -65,6 +65,17 @@
                                         <x-heroicon-o-document-text class="w-4 h-4 inline" />
                                     </button>
                                 @endunless
+                                @if (auth()->user()->is_admin)
+                                    <button
+                                        type="button"
+                                        wire:click="eliminarPedido({{ $pedido->id }})"
+                                        wire:confirm="¿Eliminar el pedido #{{ $pedido->numero }}? Esta acción no se puede deshacer y restaurará el stock de los productos."
+                                        title="Eliminar pedido"
+                                        class="text-gray-400 hover:text-red-500"
+                                    >
+                                        <x-heroicon-o-trash class="w-4 h-4 inline" />
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @empty

@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Pedidos;
 
+use App\Models\MovimientoInventario;
 use App\Models\Notificacion;
 use App\Models\Pedido;
+use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -164,6 +167,43 @@ class Index extends Component
         $this->cerrarFactura();
 
         session()->flash('success', "Pedido #{$pedido->numero} facturado correctamente.");
+    }
+
+    public function eliminarPedido(int $id): void
+    {
+        if (! Auth::user()->is_admin) {
+            return;
+        }
+
+        $pedido = Pedido::with('items')->findOrFail($id);
+
+        DB::transaction(function () use ($pedido) {
+            foreach ($pedido->items as $item) {
+                if (! $item->producto_id) {
+                    continue;
+                }
+
+                $producto = Producto::find($item->producto_id);
+
+                if (! $producto) {
+                    continue;
+                }
+
+                $producto->increment('stock', $item->cantidad);
+
+                MovimientoInventario::create([
+                    'producto_id' => $producto->id,
+                    'tipo' => 'entrada',
+                    'cantidad' => $item->cantidad,
+                    'motivo' => "Eliminación del pedido #{$pedido->numero}",
+                    'user_id' => Auth::id(),
+                ]);
+            }
+
+            $pedido->delete();
+        });
+
+        session()->flash('success', "Pedido #{$pedido->numero} eliminado y stock restaurado.");
     }
 
     public function render()

@@ -108,6 +108,17 @@
                                         <x-heroicon-o-x-circle class="w-4 h-4 inline" />
                                     </button>
                                 @endif
+                                @if (auth()->user()->is_admin)
+                                    <button
+                                        type="button"
+                                        wire:click="eliminarRuta({{ $ruta->id }})"
+                                        wire:confirm="¿Eliminar la ruta #{{ $ruta->numero }}? Esta acción no se puede deshacer."
+                                        title="Eliminar ruta"
+                                        class="text-gray-400 hover:text-red-500"
+                                    >
+                                        <x-heroicon-o-trash class="w-4 h-4 inline" />
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @empty
