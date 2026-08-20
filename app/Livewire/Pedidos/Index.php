@@ -50,6 +50,7 @@ class Index extends Component
                     ->orWhereHas('cliente', fn ($c) => $c->where('nombre', 'like', "%{$this->search}%"));
             })
             ->when($this->statusFiltro, fn ($query) => $query->where('status', $this->statusFiltro))
+            ->when(! Auth::user()->is_admin, fn ($query) => $query->where('user_id', Auth::id()))
             ->latest('id')
             ->paginate(8);
     }

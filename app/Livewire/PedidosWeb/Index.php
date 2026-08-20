@@ -4,6 +4,7 @@ namespace App\Livewire\PedidosWeb;
 
 use App\Livewire\Pedidos;
 use App\Models\Pedido;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 
@@ -25,6 +26,7 @@ class Index extends Pedidos\Index
                     ->orWhereHas('cliente', fn ($c) => $c->where('nombre', 'like', "%{$this->search}%"));
             })
             ->when($this->statusFiltro, fn ($query) => $query->where('status', $this->statusFiltro))
+            ->when(! Auth::user()->is_admin, fn ($query) => $query->where('user_id', Auth::id()))
             ->latest('id')
             ->paginate(8);
     }
