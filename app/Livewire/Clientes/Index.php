@@ -55,7 +55,7 @@ class Index extends Component
                     ->orWhere('ciudad', 'like', "%{$this->search}%");
             })
             ->latest('id')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     public function nuevo(): void

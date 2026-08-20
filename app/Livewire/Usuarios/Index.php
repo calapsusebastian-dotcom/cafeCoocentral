@@ -48,7 +48,7 @@ class Index extends Component
                     ->orWhere('email', 'like', "%{$this->search}%");
             })
             ->orderBy('name')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     #[Computed]

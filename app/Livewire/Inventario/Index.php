@@ -37,7 +37,7 @@ class Index extends Component
     #[Computed]
     public function movimientos()
     {
-        return MovimientoInventario::with('producto')->latest('id')->paginate(8);
+        return MovimientoInventario::with('producto')->latest('id')->paginate(20);
     }
 
     #[Computed]

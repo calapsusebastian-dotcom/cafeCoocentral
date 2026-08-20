@@ -28,7 +28,7 @@ class Index extends Pedidos\Index
             ->when($this->statusFiltro, fn ($query) => $query->where('status', $this->statusFiltro))
             ->when(! Auth::user()->is_admin, fn ($query) => $query->where('user_id', Auth::id()))
             ->latest('id')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     public function render()

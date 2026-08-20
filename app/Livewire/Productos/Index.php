@@ -49,7 +49,7 @@ class Index extends Component
                     ->orWhere('categoria', 'like', "%{$this->search}%");
             })
             ->orderBy('nombre')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     public function nuevo(): void

@@ -26,7 +26,7 @@ class Index extends Component
         return Notificacion::query()
             ->when($this->filtro === 'no_leidas', fn ($query) => $query->unread())
             ->latest('id')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     public function marcarLeida(int $id): void

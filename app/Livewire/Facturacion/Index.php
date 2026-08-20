@@ -41,7 +41,7 @@ class Index extends Pedidos\Index
             })
             ->when($this->statusFiltro, fn ($query) => $query->where('status', $this->statusFiltro))
             ->latest('id')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     public function render()

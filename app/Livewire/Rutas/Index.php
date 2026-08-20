@@ -55,7 +55,7 @@ class Index extends Component
                 ->orWhere('nombre', 'like', "%{$this->search}%"))
             ->when($this->statusFiltro, fn ($query) => $query->where('status', $this->statusFiltro))
             ->latest('id')
-            ->paginate(8);
+            ->paginate(20);
     }
 
     #[Computed]
