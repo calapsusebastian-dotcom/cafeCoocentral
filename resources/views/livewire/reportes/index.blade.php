@@ -1,0 +1,59 @@
+<div>
+    <div class="flex justify-end mb-6">
+        <select wire:model.live="periodo" class="rounded-xl border border-gray-200 text-sm px-3 py-2.5">
+            <option value="hoy">Hoy</option>
+            <option value="semana">Última semana</option>
+            <option value="mes">Último mes</option>
+            <option value="todo">Todo el histórico</option>
+        </select>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-5">
+            <p class="text-xs text-gray-400 mb-1">Pedidos</p>
+            <p class="text-2xl font-bold text-gray-900">{{ $this->totalPedidos }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-5">
+            <p class="text-xs text-gray-400 mb-1">Ventas totales</p>
+            <p class="text-2xl font-bold text-brand-600">${{ number_format($this->ventasTotales, 0, ',', '.') }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-5">
+            <p class="text-xs text-gray-400 mb-1">Ticket promedio</p>
+            <p class="text-2xl font-bold text-gray-900">${{ number_format($this->ticketPromedio, 0, ',', '.') }}</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-5">
+            <p class="text-xs text-gray-400 mb-1">Clientes activos</p>
+            <p class="text-2xl font-bold text-gray-900">{{ $this->clientesActivos }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
+            <h2 class="text-sm font-semibold text-gray-900 mb-4">Pedidos por estado</h2>
+            <div class="space-y-3">
+                @forelse ($this->porEstado as $status => $total)
+                    <div class="flex items-center justify-between text-sm">
+                        <x-pedido-status :status="$status" />
+                        <span class="font-medium text-gray-700">{{ (int) $total }}</span>
+                    </div>
+                @empty
+                    <p class="text-sm text-gray-400">Sin datos para este período.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
+            <h2 class="text-sm font-semibold text-gray-900 mb-4">Producto más vendido</h2>
+            <div class="space-y-3">
+                @forelse ($this->productoMasVendido as $producto)
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-700">{{ $producto->producto_nombre }}</span>
+                        <span class="font-medium text-gray-900">{{ $producto->unidades }} uds.</span>
+                    </div>
+                @empty
+                    <p class="text-sm text-gray-400">Sin datos para este período.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
