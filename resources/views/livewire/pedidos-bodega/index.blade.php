@@ -154,7 +154,7 @@
                 <div class="border-t border-gray-100 pt-4 space-y-2">
                     @foreach ($this->pedidoDetalle->items as $item)
                         <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-600">{{ $item->producto_nombre }} <span class="text-gray-400">({{ $item->presentacion }})</span></span>
+                            <span class="text-gray-600">{{ $item->producto_nombre }} <span class="text-gray-400">({{ $item->presentacion }} · {{ \App\Models\PedidoItem::MOLIENDAS[$item->molienda] ?? $item->molienda }})</span></span>
                             <span class="font-medium text-gray-800">{{ $item->cantidad }} uds.</span>
                         </div>
                     @endforeach

@@ -110,12 +110,14 @@
                                 <col class="w-auto">
                                 <col class="w-[100px]">
                                 <col class="w-[110px]">
+                                <col class="w-[110px]">
                                 <col class="w-[28px]">
                             </colgroup>
                             <thead>
                                 <tr class="text-left text-xs text-gray-400 border-b border-gray-100">
                                     <th class="px-1.5 py-2 font-medium">Producto</th>
                                     <th class="px-1.5 py-2 font-medium">Presentación</th>
+                                    <th class="px-1.5 py-2 font-medium">Molienda</th>
                                     <th class="px-1.5 py-2 font-medium">Cantidad</th>
                                     <th class="px-1.5 py-2"></th>
                                 </tr>
@@ -136,14 +138,22 @@
                                         </td>
                                         <td class="px-1.5 py-3 text-gray-500">{{ $line['presentacion'] }}</td>
                                         <td class="px-1.5 py-3">
+                                            <select wire:change="actualizarMoliendaLinea('{{ $id }}', $event.target.value)" class="w-full rounded-lg border border-gray-200 text-[11px] px-1.5 py-1.5">
+                                                <option value="entero" @selected(($line['molienda'] ?? 'entero') === 'entero')>En grano</option>
+                                                <option value="fina" @selected(($line['molienda'] ?? 'entero') === 'fina')>Fina</option>
+                                                <option value="media" @selected(($line['molienda'] ?? 'entero') === 'media')>Media</option>
+                                                <option value="gruesa" @selected(($line['molienda'] ?? 'entero') === 'gruesa')>Gruesa</option>
+                                            </select>
+                                        </td>
+                                        <td class="px-1.5 py-3">
                                             <div class="inline-flex items-center rounded-lg border border-gray-200">
-                                                <button type="button" wire:click="decrementar({{ $id }})" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-brand-600">−</button>
+                                                <button type="button" wire:click="decrementar('{{ $id }}')" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-brand-600">−</button>
                                                 <span class="w-8 text-center text-sm">{{ $line['cantidad'] }}</span>
-                                                <button type="button" wire:click="incrementar({{ $id }})" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-brand-600">+</button>
+                                                <button type="button" wire:click="incrementar('{{ $id }}')" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-brand-600">+</button>
                                             </div>
                                         </td>
                                         <td class="px-1.5 py-3 text-right">
-                                            <button type="button" wire:click="removerLinea({{ $id }})" class="text-gray-300 hover:text-red-500 transition-colors">
+                                            <button type="button" wire:click="removerLinea('{{ $id }}')" class="text-gray-300 hover:text-red-500 transition-colors">
                                                 <x-heroicon-o-trash class="w-4 h-4" />
                                             </button>
                                         </td>

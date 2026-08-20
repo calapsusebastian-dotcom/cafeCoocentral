@@ -9,6 +9,7 @@ use App\Models\PedidoBodegaItem;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -50,11 +51,12 @@ class EditarPedidoBodega extends Component
         $this->notas = $pedidoBodega->notas ?? '';
 
         foreach ($pedidoBodega->items as $item) {
-            $this->cart[(string) ($item->producto_id ?? $item->id)] = [
+            $this->cart[(string) Str::uuid()] = [
                 'producto_id' => $item->producto_id,
                 'nombre' => $item->producto_nombre,
                 'codigo' => $item->producto_codigo,
                 'presentacion' => $item->presentacion,
+                'molienda' => $item->molienda ?? 'entero',
                 'cantidad' => $item->cantidad,
             ];
         }
@@ -84,25 +86,27 @@ class EditarPedidoBodega extends Component
     public function addProducto(int $id): void
     {
         $producto = Producto::findOrFail($id);
-        $key = (string) $producto->id;
 
-        if (isset($this->cart[$key])) {
-            $this->cart[$key]['cantidad']++;
+        $lineKey = collect($this->cart)->search(
+            fn ($linea) => $linea['producto_id'] === $producto->id && $linea['molienda'] === 'entero'
+        );
+
+        if ($lineKey !== false) {
+            $this->cart[$lineKey]['cantidad']++;
         } else {
-            $this->cart[$key] = [
+            $this->cart[(string) Str::uuid()] = [
                 'producto_id' => $producto->id,
                 'nombre' => $producto->nombre,
                 'codigo' => $producto->sku,
                 'presentacion' => $producto->presentacion,
+                'molienda' => 'entero',
                 'cantidad' => 1,
             ];
         }
     }
 
-    public function incrementar(int $id): void
+    public function incrementar(string $key): void
     {
-        $key = (string) $id;
-
         if (! isset($this->cart[$key])) {
             return;
         }
@@ -110,10 +114,8 @@ class EditarPedidoBodega extends Component
         $this->cart[$key]['cantidad']++;
     }
 
-    public function decrementar(int $id): void
+    public function decrementar(string $key): void
     {
-        $key = (string) $id;
-
         if (! isset($this->cart[$key])) {
             return;
         }
@@ -121,9 +123,18 @@ class EditarPedidoBodega extends Component
         $this->cart[$key]['cantidad'] = max(1, $this->cart[$key]['cantidad'] - 1);
     }
 
-    public function removerLinea(int $id): void
+    public function actualizarMoliendaLinea(string $key, string $valor): void
     {
-        unset($this->cart[(string) $id]);
+        if (! isset($this->cart[$key])) {
+            return;
+        }
+
+        $this->cart[$key]['molienda'] = $valor;
+    }
+
+    public function removerLinea(string $key): void
+    {
+        unset($this->cart[$key]);
     }
 
     public function vaciarPedido(): void
@@ -159,6 +170,7 @@ class EditarPedidoBodega extends Component
                     'producto_nombre' => $line['nombre'],
                     'producto_codigo' => $line['codigo'],
                     'presentacion' => $line['presentacion'],
+                    'molienda' => $line['molienda'],
                     'cantidad' => $line['cantidad'],
                 ]);
             }
