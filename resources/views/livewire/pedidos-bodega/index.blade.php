@@ -73,6 +73,17 @@
                                         </button>
                                     @endif
                                 @endif
+                                @if (auth()->user()->is_admin)
+                                    <button
+                                        type="button"
+                                        wire:click="eliminarPedido({{ $pedido->id }})"
+                                        wire:confirm="¿Eliminar el pedido #{{ $pedido->numero }}? Esta acción no se puede deshacer."
+                                        title="Eliminar pedido"
+                                        class="text-gray-400 hover:text-red-500"
+                                    >
+                                        <x-heroicon-o-trash class="w-4 h-4 inline" />
+                                    </button>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -108,6 +119,18 @@
                                 <x-heroicon-o-pencil-square class="w-4 h-4" />
                                 Editar
                             </a>
+                            @if (auth()->user()->is_admin)
+                                <button type="button" wire:click="cancelarPedido({{ $this->pedidoDetalle->id }})" wire:confirm="¿Cancelar este pedido a bodega?" class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 font-medium">
+                                    <x-heroicon-o-x-mark class="w-4 h-4" />
+                                    Cancelar
+                                </button>
+                            @endif
+                        @endif
+                        @if (auth()->user()->is_admin)
+                            <button type="button" wire:click="eliminarPedido({{ $this->pedidoDetalle->id }})" wire:confirm="¿Eliminar el pedido #{{ $this->pedidoDetalle->numero }}? Esta acción no se puede deshacer." class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 font-medium">
+                                <x-heroicon-o-trash class="w-4 h-4" />
+                                Eliminar
+                            </button>
                         @endif
                         <button type="button" wire:click="cerrarModal" class="text-gray-400 hover:text-gray-600">
                             <x-heroicon-o-x-mark class="w-5 h-5" />

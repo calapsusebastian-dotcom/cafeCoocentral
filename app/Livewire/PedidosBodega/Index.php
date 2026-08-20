@@ -132,6 +132,18 @@ class Index extends Component
         session()->flash('success', "Pedido #{$pedido->numero} cancelado.");
     }
 
+    public function eliminarPedido(int $id): void
+    {
+        if (! Auth::user()->is_admin) {
+            return;
+        }
+
+        $pedido = PedidoBodega::findOrFail($id);
+        $pedido->delete();
+
+        session()->flash('success', "Pedido #{$pedido->numero} eliminado.");
+    }
+
     public function render()
     {
         return view('livewire.pedidos-bodega.index');
