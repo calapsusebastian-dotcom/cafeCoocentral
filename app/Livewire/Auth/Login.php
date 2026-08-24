@@ -55,7 +55,12 @@ class Login extends Component
             return;
         }
 
-        return redirect()->intended(route($primerModulo));
+        // No usamos redirect()->intended() aquí: Laravel guarda como "intended"
+        // la última URL protegida que el usuario visitó sin sesión (con mucha
+        // frecuencia "/", que requiere pedidos.nuevo). Si el usuario no tiene
+        // permiso sobre esa URL, intended() lo mandaría de vuelta ahí y vería
+        // "Acceso restringido" en vez de su primer módulo habilitado.
+        return redirect()->to(route($primerModulo));
     }
 
     public function render()
