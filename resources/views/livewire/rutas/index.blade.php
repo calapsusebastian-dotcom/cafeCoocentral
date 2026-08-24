@@ -178,7 +178,7 @@
                             <div class="flex items-start justify-between gap-2 mb-2">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-900">{{ $rutaCliente->cliente->nombre }}</p>
-                                    <p class="text-xs text-gray-400">{{ $rutaCliente->cliente->documento }} · {{ $rutaCliente->cliente->ciudad }}</p>
+                                    <p class="text-xs text-gray-400">Documento: {{ $rutaCliente->cliente->documento }} · Zona: {{ $rutaCliente->cliente->ciudad }}</p>
                                 </div>
                                 <button type="button" wire:click="abrirFactura({{ $rutaCliente->id }})" class="shrink-0">
                                     @if ($rutaCliente->numero_factura)
@@ -199,9 +199,9 @@
                                         <span class="text-gray-600">
                                             {{ $producto->cantidad }}× {{ $producto->producto_nombre }}
                                             <span class="text-gray-400">({{ $producto->presentacion }} · {{ \App\Models\PedidoItem::MOLIENDAS[$producto->molienda] ?? $producto->molienda }})</span>
-                                            <span class="block text-xs text-gray-400">{{ $producto->producto_codigo }} · ${{ number_format($producto->precio_unitario, 0, ',', '.') }} c/u</span>
+                                            <span class="block text-xs text-gray-400">Código: {{ $producto->producto_codigo }} · Precio unitario: ${{ number_format($producto->precio_unitario, 0, ',', '.') }}</span>
                                         </span>
-                                        <span class="font-medium text-gray-800">${{ number_format($producto->precio_unitario * $producto->cantidad, 0, ',', '.') }}</span>
+                                        <span class="font-medium text-gray-800">Total: ${{ number_format($producto->precio_unitario * $producto->cantidad, 0, ',', '.') }}</span>
                                     </div>
                                 @endforeach
                             </div>
