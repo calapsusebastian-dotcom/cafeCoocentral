@@ -199,11 +199,15 @@
                                         <span class="text-gray-600">
                                             {{ $producto->cantidad }}× {{ $producto->producto_nombre }}
                                             <span class="text-gray-400">({{ $producto->presentacion }} · {{ \App\Models\PedidoItem::MOLIENDAS[$producto->molienda] ?? $producto->molienda }})</span>
-                                            <span class="block text-xs text-gray-400">${{ number_format($producto->precio_unitario, 0, ',', '.') }} c/u</span>
+                                            <span class="block text-xs text-gray-400">{{ $producto->producto_codigo }} · ${{ number_format($producto->precio_unitario, 0, ',', '.') }} c/u</span>
                                         </span>
                                         <span class="font-medium text-gray-800">${{ number_format($producto->precio_unitario * $producto->cantidad, 0, ',', '.') }}</span>
                                     </div>
                                 @endforeach
+                            </div>
+                            <div class="border-t border-gray-200 mt-2 pt-2 flex items-center justify-between">
+                                <span class="text-xs font-medium text-gray-500">Total cliente</span>
+                                <span class="text-sm font-bold text-brand-600">${{ number_format($rutaCliente->productos->sum(fn ($p) => $p->precio_unitario * $p->cantidad), 0, ',', '.') }}</span>
                             </div>
                         </div>
                     @endforeach
