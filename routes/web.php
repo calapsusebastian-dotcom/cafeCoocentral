@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
             $porProducto = $ruta->clientes
                 ->flatMap(fn ($rutaCliente) => $rutaCliente->productos->map(fn ($producto) => (object) [
                     'producto_nombre' => $producto->producto_nombre,
+                    'producto_codigo' => $producto->producto_codigo,
                     'presentacion' => $producto->presentacion,
                     'molienda' => $producto->molienda,
                     'cantidad' => $producto->cantidad,
@@ -85,6 +86,7 @@ Route::middleware('auth')->group(function () {
                 ->groupBy(fn ($linea) => $linea->producto_nombre.'|'.$linea->presentacion)
                 ->map(fn ($lineas) => [
                     'nombre' => $lineas->first()->producto_nombre,
+                    'codigo' => $lineas->first()->producto_codigo,
                     'presentacion' => $lineas->first()->presentacion,
                     'total' => $lineas->sum('cantidad'),
                     'moliendas' => $lineas->groupBy('molienda')->map(fn ($grupo) => [

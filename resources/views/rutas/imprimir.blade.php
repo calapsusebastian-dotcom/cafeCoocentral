@@ -96,7 +96,7 @@
                         <div class="flex items-center justify-between gap-3 rounded-lg bg-gray-50 px-3 py-2">
                             <p class="text-sm text-gray-900 shrink-0">
                                 <span class="font-medium">{{ $producto['nombre'] }}</span>
-                                <span class="text-xs text-gray-400">{{ $producto['presentacion'] }}</span>
+                                <span class="text-xs text-gray-400">{{ $producto['codigo'] }} · {{ $producto['presentacion'] }}</span>
                             </p>
                             <div class="flex flex-wrap justify-end gap-x-3 gap-y-0.5">
                                 @foreach ($producto['moliendas'] as $molienda => $grupo)
@@ -137,7 +137,7 @@
                                         <tr class="border-b border-gray-50 last:border-0">
                                             <td class="py-1">
                                                 <span class="text-gray-800">{{ $producto->producto_nombre }}</span>
-                                                <span class="text-xs text-gray-400">{{ $producto->presentacion }}</span>
+                                                <span class="text-xs text-gray-400">{{ $producto->producto_codigo }} · {{ $producto->presentacion }}</span>
                                             </td>
                                             <td class="py-1 text-gray-500">{{ \App\Models\PedidoItem::MOLIENDAS[$producto->molienda] ?? $producto->molienda }}</td>
                                             <td class="py-1 text-right text-gray-700 font-medium">{{ $producto->cantidad }}</td>
