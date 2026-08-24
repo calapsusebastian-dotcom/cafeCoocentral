@@ -280,28 +280,37 @@ class EditarRuta extends Component
 
     /**
      * Fires for any wire:model-bound "clientes.*" update — used here to
-     * clamp a manually typed quantity to a minimum of 1.
+     * clamp a manually typed quantity/precio a valid numbers. Sin esto,
+     * borrar el campo de precio deja un string vacío en el array y el
+     * cálculo de totales (precio_unitario * cantidad) revienta con un
+     * error 500 ("Unsupported operand types: string * int").
      */
     public function updatedClientes($value, $key): void
     {
-        if (! str_ends_with($key, '.cantidad')) {
+        foreach (['cantidad', 'precio_unitario'] as $campo) {
+            if (! str_ends_with($key, ".{$campo}")) {
+                continue;
+            }
+
+            $path = substr($key, 0, -strlen(".{$campo}"));
+            $segments = explode('.', $path, 3);
+
+            if (count($segments) !== 3 || $segments[1] !== 'productos') {
+                return;
+            }
+
+            [$clienteKey, , $lineKey] = $segments;
+
+            if (! isset($this->clientes[$clienteKey]['productos'][$lineKey])) {
+                return;
+            }
+
+            $this->clientes[$clienteKey]['productos'][$lineKey][$campo] = $campo === 'cantidad'
+                ? max(1, (int) $value)
+                : max(0, (float) $value);
+
             return;
         }
-
-        $path = substr($key, 0, -strlen('.cantidad'));
-        $segments = explode('.', $path, 3);
-
-        if (count($segments) !== 3 || $segments[1] !== 'productos') {
-            return;
-        }
-
-        [$clienteKey, , $lineKey] = $segments;
-
-        if (! isset($this->clientes[$clienteKey]['productos'][$lineKey])) {
-            return;
-        }
-
-        $this->clientes[$clienteKey]['productos'][$lineKey]['cantidad'] = max(1, (int) $value);
     }
 
     public function actualizarMoliendaProducto(int $clienteId, string $key, string $valor): void
