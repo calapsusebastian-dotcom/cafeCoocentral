@@ -143,7 +143,7 @@
 
     @if ($this->rutaDetalle)
         <div class="fixed inset-0 z-30 flex items-center justify-center bg-gray-900/40 px-4" wire:click.self="cerrarModal">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 max-h-[85vh] overflow-y-auto">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6 max-h-[85vh] overflow-y-auto">
                 <div class="flex items-start justify-between mb-4">
                     <div>
                         <p class="text-xs text-gray-400">Ruta</p>
@@ -160,7 +160,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm mb-4">
                     <div><p class="text-xs text-gray-400">Fecha</p><p class="text-gray-800 font-medium">{{ $this->rutaDetalle->fecha->format('d/m/Y') }}</p></div>
                     <div><p class="text-xs text-gray-400">Responsable</p><p class="text-gray-800 font-medium">{{ $this->rutaDetalle->usuario->name }}</p></div>
                     <div><p class="text-xs text-gray-400">Estado</p><p class="text-gray-800 font-medium">{{ ucfirst($this->rutaDetalle->status) }}</p></div>
@@ -175,10 +175,13 @@
                 <div class="space-y-4">
                     @foreach ($this->rutaDetalle->clientes as $rutaCliente)
                         <div class="rounded-xl bg-gray-50 p-4">
-                            <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="flex items-start justify-between gap-2 mb-3">
                                 <div>
                                     <p class="text-sm font-semibold text-gray-900">{{ $rutaCliente->cliente->nombre }}</p>
-                                    <p class="text-xs text-gray-400">Documento: {{ $rutaCliente->cliente->documento }} · Zona: {{ $rutaCliente->cliente->ciudad }}</p>
+                                    <div class="flex items-center gap-4 mt-0.5">
+                                        <p class="text-xs text-gray-400">Documento <span class="text-gray-600 font-medium">{{ $rutaCliente->cliente->documento }}</span></p>
+                                        <p class="text-xs text-gray-400">Zona <span class="text-gray-600 font-medium">{{ $rutaCliente->cliente->ciudad }}</span></p>
+                                    </div>
                                 </div>
                                 <button type="button" wire:click="abrirFactura({{ $rutaCliente->id }})" class="shrink-0">
                                     @if ($rutaCliente->numero_factura)
@@ -193,17 +196,32 @@
                                     @endif
                                 </button>
                             </div>
-                            <div class="space-y-1.5">
-                                @foreach ($rutaCliente->productos as $producto)
-                                    <div class="flex items-center justify-between text-sm">
-                                        <span class="text-gray-600">
-                                            {{ $producto->cantidad }}× {{ $producto->producto_nombre }}
-                                            <span class="text-gray-400">({{ $producto->presentacion }} · {{ \App\Models\PedidoItem::MOLIENDAS[$producto->molienda] ?? $producto->molienda }})</span>
-                                            <span class="block text-xs text-gray-400">Código: {{ $producto->producto_codigo }} · Precio unitario: ${{ number_format($producto->precio_unitario, 0, ',', '.') }}</span>
-                                        </span>
-                                        <span class="font-medium text-gray-800">Total: ${{ number_format($producto->precio_unitario * $producto->cantidad, 0, ',', '.') }}</span>
-                                    </div>
-                                @endforeach
+                            <div class="overflow-x-auto -mx-1">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="text-left text-xs text-gray-400 border-b border-gray-200">
+                                            <th class="px-1 py-1.5 font-medium">Producto</th>
+                                            <th class="px-1 py-1.5 font-medium">Código</th>
+                                            <th class="px-1 py-1.5 font-medium text-right">Cant.</th>
+                                            <th class="px-1 py-1.5 font-medium text-right">Precio unitario</th>
+                                            <th class="px-1 py-1.5 font-medium text-right">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($rutaCliente->productos as $producto)
+                                            <tr class="border-b border-gray-100 last:border-0">
+                                                <td class="px-1 py-2">
+                                                    <p class="text-gray-800">{{ $producto->producto_nombre }}</p>
+                                                    <p class="text-xs text-gray-400">{{ $producto->presentacion }} · {{ \App\Models\PedidoItem::MOLIENDAS[$producto->molienda] ?? $producto->molienda }}</p>
+                                                </td>
+                                                <td class="px-1 py-2 text-gray-500">{{ $producto->producto_codigo }}</td>
+                                                <td class="px-1 py-2 text-right text-gray-700 font-medium">{{ $producto->cantidad }}</td>
+                                                <td class="px-1 py-2 text-right text-gray-600">${{ number_format($producto->precio_unitario, 0, ',', '.') }}</td>
+                                                <td class="px-1 py-2 text-right font-medium text-gray-800">${{ number_format($producto->precio_unitario * $producto->cantidad, 0, ',', '.') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="border-t border-gray-200 mt-2 pt-2 flex items-center justify-between">
                                 <span class="text-xs font-medium text-gray-500">Total cliente</span>
