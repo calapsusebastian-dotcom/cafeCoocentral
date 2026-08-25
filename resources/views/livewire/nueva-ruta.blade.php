@@ -56,7 +56,33 @@
                         <button type="button" wire:click="colapsarTodo" class="hover:text-brand-600">Colapsar todo</button>
                     </div>
 
-                    <div class="space-y-3" x-data="{ dragId: null }">
+                    <div
+                        class="space-y-3"
+                        x-data="{
+                            dragId: null,
+                            dragOverId: null,
+                            iniciarArrastre(id, event) {
+                                this.dragId = id;
+                                event.preventDefault();
+                            },
+                            actualizarDestino(event) {
+                                if (this.dragId === null) return;
+                                const el = document.elementFromPoint(event.clientX, event.clientY);
+                                const card = el ? el.closest('[data-cliente-card]') : null;
+                                this.dragOverId = card ? parseInt(card.dataset.clienteCard, 10) : null;
+                            },
+                            soltar() {
+                                if (this.dragId !== null && this.dragOverId !== null && this.dragId !== this.dragOverId) {
+                                    $wire.reordenarCliente(this.dragId, this.dragOverId);
+                                }
+                                this.dragId = null;
+                                this.dragOverId = null;
+                            },
+                        }"
+                        x-on:pointermove.window="actualizarDestino($event)"
+                        x-on:pointerup.window="soltar()"
+                        x-on:pointercancel.window="dragId = null; dragOverId = null"
+                    >
                         @foreach ($clientes as $clienteId => $cliente)
                             @php
                                 $numProductos = count($cliente['productos']);
@@ -64,21 +90,18 @@
                                 $abierto = ! ($clientesColapsados[$clienteId] ?? false);
                             @endphp
                             <div
-                                class="rounded-xl border border-gray-100 overflow-hidden transition-opacity"
-                                :class="{ 'opacity-40': dragId === {{ $clienteId }} }"
+                                data-cliente-card="{{ $clienteId }}"
+                                class="rounded-xl border border-gray-100 overflow-hidden transition-all"
+                                :class="{ 'opacity-40': dragId === {{ $clienteId }}, 'ring-2 ring-brand-400': dragOverId === {{ $clienteId }} && dragId !== null && dragId !== {{ $clienteId }} }"
                                 wire:key="ruta-cliente-{{ $clienteId }}"
-                                x-on:dragover.prevent
-                                x-on:drop.prevent="if (dragId !== null && dragId !== {{ $clienteId }}) { $wire.reordenarCliente(dragId, {{ $clienteId }}) }; dragId = null"
                             >
                                 <div class="flex items-center justify-between gap-2 p-4 cursor-pointer hover:bg-gray-50 transition-colors" wire:click="toggleClienteAbierto({{ $clienteId }})">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <span
-                                            draggable="true"
-                                            x-on:dragstart.stop="dragId = {{ $clienteId }}"
-                                            x-on:dragend.stop="dragId = null"
+                                            x-on:pointerdown="iniciarArrastre({{ $clienteId }}, $event)"
                                             x-on:click.stop
                                             title="Arrastrar para reordenar"
-                                            class="cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 shrink-0"
+                                            class="cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 shrink-0 touch-none"
                                         >
                                             <x-heroicon-o-bars-3 class="w-4 h-4" />
                                         </span>
