@@ -60,28 +60,33 @@
                         class="space-y-3"
                         x-data="{
                             dragId: null,
-                            dragOverId: null,
+                            dragEl: null,
                             iniciarArrastre(id, event) {
                                 this.dragId = id;
+                                this.dragEl = event.currentTarget.closest('[data-cliente-card]');
                                 event.preventDefault();
                             },
-                            actualizarDestino(event) {
-                                if (this.dragId === null) return;
+                            duranteArrastre(event) {
+                                if (this.dragId === null || ! this.dragEl) return;
                                 const el = document.elementFromPoint(event.clientX, event.clientY);
                                 const card = el ? el.closest('[data-cliente-card]') : null;
-                                this.dragOverId = card ? parseInt(card.dataset.clienteCard, 10) : null;
+                                if (! card || card === this.dragEl || card.parentNode !== this.dragEl.parentNode) return;
+                                const rect = card.getBoundingClientRect();
+                                const antesDelCentro = (event.clientY - rect.top) < rect.height / 2;
+                                card.parentNode.insertBefore(this.dragEl, antesDelCentro ? card : card.nextSibling);
                             },
                             soltar() {
-                                if (this.dragId !== null && this.dragOverId !== null && this.dragId !== this.dragOverId) {
-                                    $wire.reordenarCliente(this.dragId, this.dragOverId);
+                                if (this.dragId !== null && this.dragEl) {
+                                    const orden = Array.from(this.dragEl.parentNode.querySelectorAll('[data-cliente-card]')).map(el => parseInt(el.dataset.clienteCard, 10));
+                                    $wire.reordenarTodos(orden);
                                 }
                                 this.dragId = null;
-                                this.dragOverId = null;
+                                this.dragEl = null;
                             },
                         }"
-                        x-on:pointermove.window="actualizarDestino($event)"
+                        x-on:pointermove.window="duranteArrastre($event)"
                         x-on:pointerup.window="soltar()"
-                        x-on:pointercancel.window="dragId = null; dragOverId = null"
+                        x-on:pointercancel.window="dragId = null; dragEl = null"
                     >
                         @foreach ($clientes as $clienteId => $cliente)
                             @php
@@ -91,8 +96,8 @@
                             @endphp
                             <div
                                 data-cliente-card="{{ $clienteId }}"
-                                class="rounded-xl border border-gray-100 overflow-hidden transition-all"
-                                :class="{ 'opacity-40': dragId === {{ $clienteId }}, 'ring-2 ring-brand-400': dragOverId === {{ $clienteId }} && dragId !== null && dragId !== {{ $clienteId }} }"
+                                class="rounded-xl border border-gray-100 overflow-hidden transition-all bg-white"
+                                :class="{ 'opacity-60 shadow-lg': dragId === {{ $clienteId }} }"
                                 wire:key="ruta-cliente-{{ $clienteId }}"
                             >
                                 <div class="flex items-center justify-between gap-2 p-4 cursor-pointer hover:bg-gray-50 transition-colors" wire:click="toggleClienteAbierto({{ $clienteId }})">

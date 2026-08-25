@@ -206,28 +206,27 @@ class EditarRuta extends Component
     }
 
     /**
-     * Reubica al cliente arrastrado justo en la posición del cliente sobre
-     * el que se soltó, corriendo a los demás. Respalda el arrastrar-y-soltar
-     * de la lista de clientes.
+     * Recibe el orden final de IDs de cliente tras un arrastrar-y-soltar (el
+     * navegador ya reubicó las tarjetas al soltar; esto solo persiste ese
+     * orden en el servidor).
      */
-    public function reordenarCliente(int $origenId, int $destinoId): void
+    public function reordenarTodos(array $ordenIds): void
     {
-        if ($origenId === $destinoId) {
-            return;
+        $nuevo = [];
+
+        foreach ($ordenIds as $id) {
+            if (isset($this->clientes[$id])) {
+                $nuevo[$id] = $this->clientes[$id];
+            }
         }
 
-        $keys = array_keys($this->clientes);
-        $origenIndex = array_search($origenId, $keys, true);
-
-        if ($origenIndex === false || ! in_array($destinoId, $keys, true)) {
-            return;
+        foreach ($this->clientes as $id => $cliente) {
+            if (! isset($nuevo[$id])) {
+                $nuevo[$id] = $cliente;
+            }
         }
 
-        array_splice($keys, $origenIndex, 1);
-        $destinoIndex = array_search($destinoId, $keys, true);
-        array_splice($keys, $destinoIndex, 0, [$origenId]);
-
-        $this->clientes = collect($keys)->mapWithKeys(fn ($key) => [$key => $this->clientes[$key]])->all();
+        $this->clientes = $nuevo;
     }
 
     public function toggleClienteAbierto(int $clienteId): void
