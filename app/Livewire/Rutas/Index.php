@@ -34,8 +34,6 @@ class Index extends Component
 
     public string $costo_ruta = '';
 
-    public string $centro_costo = '';
-
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -124,7 +122,6 @@ class Index extends Component
         $this->conductor_nombre = $ruta->conductor_nombre ?? '';
         $this->conductor_cc = $ruta->conductor_cc ?? '';
         $this->costo_ruta = $ruta->costo_ruta !== null ? (string) $ruta->costo_ruta : '';
-        $this->centro_costo = $ruta->centro_costo ?? '';
     }
 
     public function cerrarDespacho(): void
@@ -133,8 +130,7 @@ class Index extends Component
         $this->conductor_nombre = '';
         $this->conductor_cc = '';
         $this->costo_ruta = '';
-        $this->centro_costo = '';
-        $this->resetErrorBag(['conductor_nombre', 'conductor_cc', 'costo_ruta', 'centro_costo']);
+        $this->resetErrorBag(['conductor_nombre', 'conductor_cc', 'costo_ruta']);
     }
 
     public function confirmarDespacho(): void
@@ -143,12 +139,10 @@ class Index extends Component
             'conductor_nombre' => 'required|string|max:255',
             'conductor_cc' => 'required|string|max:50',
             'costo_ruta' => 'required|numeric|min:0',
-            'centro_costo' => 'required|string|in:Garzón,Bogotá,Neiva,Producción',
         ], [], [
             'conductor_nombre' => 'nombre del conductor',
             'conductor_cc' => 'cédula del conductor',
             'costo_ruta' => 'costo de la ruta',
-            'centro_costo' => 'centro de costos',
         ]);
 
         $ruta = Ruta::findOrFail($this->despacharRutaId);
@@ -162,7 +156,6 @@ class Index extends Component
             'conductor_nombre' => $this->conductor_nombre,
             'conductor_cc' => $this->conductor_cc,
             'costo_ruta' => $this->costo_ruta,
-            'centro_costo' => $this->centro_costo,
             'despachada_at' => now(),
         ]);
 

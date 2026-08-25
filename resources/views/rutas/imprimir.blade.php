@@ -85,8 +85,6 @@
                         <span class="text-gray-800 font-medium">{{ $ruta->conductor_nombre }} · CC {{ $ruta->conductor_cc }}</span>
                         <span class="text-gray-400">Costo de la ruta</span>
                         <span class="text-gray-800 font-medium">${{ number_format($ruta->costo_ruta, 0, ',', '.') }}</span>
-                        <span class="text-gray-400">Centro de costos</span>
-                        <span class="text-gray-800 font-medium">{{ $ruta->centro_costo ?: '—' }}</span>
                     @endif
                 </div>
             </div>

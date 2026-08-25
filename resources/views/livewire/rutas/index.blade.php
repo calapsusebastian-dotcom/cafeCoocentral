@@ -169,7 +169,6 @@
                         <div><p class="text-xs text-gray-400">Conductor</p><p class="text-gray-800 font-medium">{{ $this->rutaDetalle->conductor_nombre }}</p></div>
                         <div><p class="text-xs text-gray-400">Cédula conductor</p><p class="text-gray-800 font-medium">{{ $this->rutaDetalle->conductor_cc }}</p></div>
                         <div><p class="text-xs text-gray-400">Costo de la ruta</p><p class="text-gray-800 font-medium">${{ number_format($this->rutaDetalle->costo_ruta, 0, ',', '.') }}</p></div>
-                        <div><p class="text-xs text-gray-400">Centro de costos</p><p class="text-gray-800 font-medium">{{ $this->rutaDetalle->centro_costo ?: '—' }}</p></div>
                     @endif
                 </div>
 
@@ -347,18 +346,6 @@
                             />
                         </div>
                         @error('costo_ruta') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                    </label>
-
-                    <label class="block">
-                        <span class="text-xs text-gray-400">Centro de costos *</span>
-                        <select wire:model="centro_costo" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200">
-                            <option value="">Selecciona un centro de costos</option>
-                            <option value="Garzón">Garzón</option>
-                            <option value="Bogotá">Bogotá</option>
-                            <option value="Neiva">Neiva</option>
-                            <option value="Producción">Producción</option>
-                        </select>
-                        @error('centro_costo') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                     </label>
                 </div>
 

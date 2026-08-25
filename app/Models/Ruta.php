@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
     'numero', 'nombre', 'fecha', 'user_id', 'status', 'notas', 'recibida_at',
-    'conductor_nombre', 'conductor_cc', 'costo_ruta', 'centro_costo', 'despachada_at', 'entregada_at',
+    'conductor_nombre', 'conductor_cc', 'costo_ruta', 'despachada_at', 'entregada_at',
 ])]
 class Ruta extends Model
 {
