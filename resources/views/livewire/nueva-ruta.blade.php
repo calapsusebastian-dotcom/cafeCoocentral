@@ -56,16 +56,32 @@
                         <button type="button" wire:click="colapsarTodo" class="hover:text-brand-600">Colapsar todo</button>
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-3" x-data="{ dragId: null }">
                         @foreach ($clientes as $clienteId => $cliente)
                             @php
                                 $numProductos = count($cliente['productos']);
                                 $subtotalCliente = collect($cliente['productos'])->sum(fn ($p) => $p['precio_unitario'] * $p['cantidad']);
                                 $abierto = ! ($clientesColapsados[$clienteId] ?? false);
                             @endphp
-                            <div class="rounded-xl border border-gray-100 overflow-hidden" wire:key="ruta-cliente-{{ $clienteId }}">
+                            <div
+                                class="rounded-xl border border-gray-100 overflow-hidden transition-opacity"
+                                :class="{ 'opacity-40': dragId === {{ $clienteId }} }"
+                                wire:key="ruta-cliente-{{ $clienteId }}"
+                                x-on:dragover.prevent
+                                x-on:drop.prevent="if (dragId !== null && dragId !== {{ $clienteId }}) { $wire.reordenarCliente(dragId, {{ $clienteId }}) }; dragId = null"
+                            >
                                 <div class="flex items-center justify-between gap-2 p-4 cursor-pointer hover:bg-gray-50 transition-colors" wire:click="toggleClienteAbierto({{ $clienteId }})">
                                     <div class="flex items-center gap-3 min-w-0">
+                                        <span
+                                            draggable="true"
+                                            x-on:dragstart.stop="dragId = {{ $clienteId }}"
+                                            x-on:dragend.stop="dragId = null"
+                                            x-on:click.stop
+                                            title="Arrastrar para reordenar"
+                                            class="cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 shrink-0"
+                                        >
+                                            <x-heroicon-o-bars-3 class="w-4 h-4" />
+                                        </span>
                                         <x-heroicon-o-chevron-right class="w-4 h-4 text-gray-400 shrink-0 transition-transform {{ $abierto ? 'rotate-90' : '' }}" />
                                         <div class="min-w-0">
                                             <p class="text-sm font-semibold text-gray-900 truncate">{{ $cliente['nombre'] }}</p>

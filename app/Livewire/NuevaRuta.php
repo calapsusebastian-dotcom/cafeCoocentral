@@ -161,6 +161,31 @@ class NuevaRuta extends Component
         $this->clientes = collect($keys)->mapWithKeys(fn ($key) => [$key => $this->clientes[$key]])->all();
     }
 
+    /**
+     * Reubica al cliente arrastrado justo en la posición del cliente sobre
+     * el que se soltó, corriendo a los demás. Respalda el arrastrar-y-soltar
+     * de la lista de clientes.
+     */
+    public function reordenarCliente(int $origenId, int $destinoId): void
+    {
+        if ($origenId === $destinoId) {
+            return;
+        }
+
+        $keys = array_keys($this->clientes);
+        $origenIndex = array_search($origenId, $keys, true);
+
+        if ($origenIndex === false || ! in_array($destinoId, $keys, true)) {
+            return;
+        }
+
+        array_splice($keys, $origenIndex, 1);
+        $destinoIndex = array_search($destinoId, $keys, true);
+        array_splice($keys, $destinoIndex, 0, [$origenId]);
+
+        $this->clientes = collect($keys)->mapWithKeys(fn ($key) => [$key => $this->clientes[$key]])->all();
+    }
+
     public function toggleClienteAbierto(int $clienteId): void
     {
         $key = (string) $clienteId;
