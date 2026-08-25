@@ -121,6 +121,7 @@ class NuevaRuta extends Component
                     'cliente_id' => $cliente->id,
                     'nombre' => $cliente->nombre,
                     'documento' => $cliente->documento,
+                    'medio_pago' => 'pendiente',
                     'productos' => [],
                 ];
             }
@@ -134,6 +135,17 @@ class NuevaRuta extends Component
     {
         unset($this->clientes[(string) $clienteId]);
         unset($this->clientesColapsados[(string) $clienteId]);
+    }
+
+    public function actualizarMedioPago(int $clienteId, string $valor): void
+    {
+        $clienteKey = (string) $clienteId;
+
+        if (! isset($this->clientes[$clienteKey])) {
+            return;
+        }
+
+        $this->clientes[$clienteKey]['medio_pago'] = $valor;
     }
 
     public function moverClienteArriba(int $clienteId): void
@@ -377,6 +389,7 @@ class NuevaRuta extends Component
                     'ruta_id' => $ruta->id,
                     'cliente_id' => $cliente['cliente_id'],
                     'orden' => $orden,
+                    'medio_pago' => $cliente['medio_pago'] ?? 'pendiente',
                 ]);
 
                 foreach ($cliente['productos'] as $producto) {

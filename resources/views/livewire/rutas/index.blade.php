@@ -181,6 +181,7 @@
                                     <div class="flex items-center gap-4 mt-0.5">
                                         <p class="text-xs text-gray-400">Documento <span class="text-gray-600 font-medium">{{ $rutaCliente->cliente->documento }}</span></p>
                                         <p class="text-xs text-gray-400">Zona <span class="text-gray-600 font-medium">{{ $rutaCliente->cliente->ciudad }}</span></p>
+                                        <p class="text-xs text-gray-400">Medio de pago <span class="text-gray-600 font-medium">{{ $rutaCliente->medioPagoLabel() }}</span></p>
                                     </div>
                                 </div>
                                 <button type="button" wire:click="abrirFactura({{ $rutaCliente->id }})" class="shrink-0">

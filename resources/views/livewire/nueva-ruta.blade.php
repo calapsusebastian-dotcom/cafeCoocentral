@@ -133,6 +133,19 @@
                                     </div>
                                 </div>
 
+                                <div class="px-4 pb-3 flex items-center gap-2">
+                                    <span class="text-xs text-gray-400 shrink-0">Medio de pago</span>
+                                    <select wire:change="actualizarMedioPago({{ $clienteId }}, $event.target.value)" class="rounded-lg border border-gray-200 text-xs px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200">
+                                        <option value="pendiente" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'pendiente')>⏳ Pendiente</option>
+                                        <option value="efectivo" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'efectivo')>💵 Efectivo</option>
+                                        <option value="transferencia" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'transferencia')>🏦 Transferencia</option>
+                                        <option value="credito_30" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'credito_30')>📅 Crédito 30 días</option>
+                                        <option value="credito_45" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'credito_45')>📅 Crédito 45 días</option>
+                                        <option value="credito_60" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'credito_60')>📅 Crédito 60 días</option>
+                                        <option value="credito_90" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'credito_90')>📅 Crédito 90 días</option>
+                                    </select>
+                                </div>
+
                                 @if ($abierto)
                                 <div class="px-4">
                                 @if (empty($cliente['productos']))

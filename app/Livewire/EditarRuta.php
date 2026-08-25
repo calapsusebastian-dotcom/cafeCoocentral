@@ -70,6 +70,7 @@ class EditarRuta extends Component
                 'cliente_id' => $rutaCliente->cliente_id,
                 'nombre' => $rutaCliente->cliente->nombre,
                 'documento' => $rutaCliente->cliente->documento,
+                'medio_pago' => $rutaCliente->medio_pago ?? 'pendiente',
                 'productos' => [],
             ];
 
@@ -165,6 +166,7 @@ class EditarRuta extends Component
                     'cliente_id' => $cliente->id,
                     'nombre' => $cliente->nombre,
                     'documento' => $cliente->documento,
+                    'medio_pago' => 'pendiente',
                     'productos' => [],
                 ];
             }
@@ -178,6 +180,17 @@ class EditarRuta extends Component
     {
         unset($this->clientes[(string) $clienteId]);
         unset($this->clientesColapsados[(string) $clienteId]);
+    }
+
+    public function actualizarMedioPago(int $clienteId, string $valor): void
+    {
+        $clienteKey = (string) $clienteId;
+
+        if (! isset($this->clientes[$clienteKey])) {
+            return;
+        }
+
+        $this->clientes[$clienteKey]['medio_pago'] = $valor;
     }
 
     public function moverClienteArriba(int $clienteId): void
@@ -417,6 +430,7 @@ class EditarRuta extends Component
                     'ruta_id' => $this->ruta->id,
                     'cliente_id' => $cliente['cliente_id'],
                     'orden' => $orden,
+                    'medio_pago' => $cliente['medio_pago'] ?? 'pendiente',
                     'numero_factura' => $facturaPrevia?->numero_factura,
                     'facturado_at' => $facturaPrevia?->facturado_at,
                 ]);
