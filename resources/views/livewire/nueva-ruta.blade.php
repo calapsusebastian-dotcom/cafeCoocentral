@@ -75,6 +75,14 @@
                                     <div class="flex items-center gap-3 shrink-0">
                                         <span class="text-xs text-gray-400 hidden sm:inline">{{ $numProductos }} {{ Str::plural('producto', $numProductos) }}</span>
                                         <span class="text-xs font-medium text-gray-700">${{ number_format($subtotalCliente, 0, ',', '.') }}</span>
+                                        <div class="flex items-center">
+                                            <button type="button" wire:click.stop="moverClienteArriba({{ $clienteId }})" @disabled($loop->first) title="Subir cliente" class="text-gray-300 hover:text-brand-600 disabled:opacity-30 disabled:hover:text-gray-300 transition-colors">
+                                                <x-heroicon-o-chevron-up class="w-4 h-4" />
+                                            </button>
+                                            <button type="button" wire:click.stop="moverClienteAbajo({{ $clienteId }})" @disabled($loop->last) title="Bajar cliente" class="text-gray-300 hover:text-brand-600 disabled:opacity-30 disabled:hover:text-gray-300 transition-colors">
+                                                <x-heroicon-o-chevron-down class="w-4 h-4" />
+                                            </button>
+                                        </div>
                                         <button type="button" wire:click.stop="quitarCliente({{ $clienteId }})" class="text-gray-300 hover:text-red-500 transition-colors">
                                             <x-heroicon-o-x-mark class="w-4 h-4" />
                                         </button>

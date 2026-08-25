@@ -32,6 +32,6 @@ class Ruta extends Model
 
     public function clientes()
     {
-        return $this->hasMany(RutaCliente::class);
+        return $this->hasMany(RutaCliente::class)->orderBy('orden');
     }
 }

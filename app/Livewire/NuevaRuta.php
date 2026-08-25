@@ -136,6 +136,31 @@ class NuevaRuta extends Component
         unset($this->clientesColapsados[(string) $clienteId]);
     }
 
+    public function moverClienteArriba(int $clienteId): void
+    {
+        $this->moverCliente($clienteId, -1);
+    }
+
+    public function moverClienteAbajo(int $clienteId): void
+    {
+        $this->moverCliente($clienteId, 1);
+    }
+
+    private function moverCliente(int $clienteId, int $direccion): void
+    {
+        $keys = array_keys($this->clientes);
+        $index = array_search($clienteId, $keys, true);
+        $nuevoIndex = $index + $direccion;
+
+        if ($index === false || $nuevoIndex < 0 || $nuevoIndex >= count($keys)) {
+            return;
+        }
+
+        [$keys[$index], $keys[$nuevoIndex]] = [$keys[$nuevoIndex], $keys[$index]];
+
+        $this->clientes = collect($keys)->mapWithKeys(fn ($key) => [$key => $this->clientes[$key]])->all();
+    }
+
     public function toggleClienteAbierto(int $clienteId): void
     {
         $key = (string) $clienteId;
@@ -323,10 +348,11 @@ class NuevaRuta extends Component
                 'notas' => $this->notas,
             ]);
 
-            foreach ($this->clientes as $cliente) {
+            foreach (array_values($this->clientes) as $orden => $cliente) {
                 $rutaCliente = RutaCliente::create([
                     'ruta_id' => $ruta->id,
                     'cliente_id' => $cliente['cliente_id'],
+                    'orden' => $orden,
                 ]);
 
                 foreach ($cliente['productos'] as $producto) {
