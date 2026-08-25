@@ -122,6 +122,7 @@ class NuevaRuta extends Component
                     'nombre' => $cliente->nombre,
                     'documento' => $cliente->documento,
                     'medio_pago' => 'pendiente',
+                    'numero_orden' => '',
                     'productos' => [],
                 ];
             }
@@ -390,6 +391,7 @@ class NuevaRuta extends Component
                     'cliente_id' => $cliente['cliente_id'],
                     'orden' => $orden,
                     'medio_pago' => $cliente['medio_pago'] ?? 'pendiente',
+                    'numero_orden' => $cliente['numero_orden'] ?: null,
                 ]);
 
                 foreach ($cliente['productos'] as $producto) {

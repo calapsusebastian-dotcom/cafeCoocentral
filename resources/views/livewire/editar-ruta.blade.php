@@ -144,6 +144,13 @@
                                         <option value="credito_60" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'credito_60')>📅 Crédito 60 días</option>
                                         <option value="credito_90" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'credito_90')>📅 Crédito 90 días</option>
                                     </select>
+                                    <span class="text-xs text-gray-400 shrink-0">N.° de orden</span>
+                                    <input
+                                        type="text"
+                                        wire:model.live.debounce.500ms="clientes.{{ $clienteId }}.numero_orden"
+                                        placeholder="Opcional"
+                                        class="w-28 rounded-lg border border-gray-200 text-xs px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200"
+                                    />
                                 </div>
 
                                 @if ($abierto)

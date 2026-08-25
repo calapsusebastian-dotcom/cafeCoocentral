@@ -182,6 +182,9 @@
                                         <p class="text-xs text-gray-400">Documento <span class="text-gray-600 font-medium">{{ $rutaCliente->cliente->documento }}</span></p>
                                         <p class="text-xs text-gray-400">Zona <span class="text-gray-600 font-medium">{{ $rutaCliente->cliente->ciudad }}</span></p>
                                         <p class="text-xs text-gray-400">Medio de pago <span class="text-gray-600 font-medium">{{ $rutaCliente->medioPagoLabel() }}</span></p>
+                                        @if ($rutaCliente->numero_orden)
+                                            <p class="text-xs text-gray-400">N.° de orden <span class="text-gray-600 font-medium">{{ $rutaCliente->numero_orden }}</span></p>
+                                        @endif
                                     </div>
                                 </div>
                                 <button type="button" wire:click="abrirFactura({{ $rutaCliente->id }})" class="shrink-0">

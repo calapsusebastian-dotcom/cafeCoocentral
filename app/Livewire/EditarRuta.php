@@ -71,6 +71,7 @@ class EditarRuta extends Component
                 'nombre' => $rutaCliente->cliente->nombre,
                 'documento' => $rutaCliente->cliente->documento,
                 'medio_pago' => $rutaCliente->medio_pago ?? 'pendiente',
+                'numero_orden' => $rutaCliente->numero_orden ?? '',
                 'productos' => [],
             ];
 
@@ -167,6 +168,7 @@ class EditarRuta extends Component
                     'nombre' => $cliente->nombre,
                     'documento' => $cliente->documento,
                     'medio_pago' => 'pendiente',
+                    'numero_orden' => '',
                     'productos' => [],
                 ];
             }
@@ -431,6 +433,7 @@ class EditarRuta extends Component
                     'cliente_id' => $cliente['cliente_id'],
                     'orden' => $orden,
                     'medio_pago' => $cliente['medio_pago'] ?? 'pendiente',
+                    'numero_orden' => $cliente['numero_orden'] ?: null,
                     'numero_factura' => $facturaPrevia?->numero_factura,
                     'facturado_at' => $facturaPrevia?->facturado_at,
                 ]);

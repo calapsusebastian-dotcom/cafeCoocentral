@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['ruta_id', 'cliente_id', 'orden', 'medio_pago', 'numero_factura', 'facturado_at'])]
+#[Fillable(['ruta_id', 'cliente_id', 'orden', 'medio_pago', 'numero_orden', 'numero_factura', 'facturado_at'])]
 class RutaCliente extends Model
 {
     protected function casts(): array
