@@ -59,6 +59,8 @@ class NuevoPedido extends Component
 
     public string $envioCosto = '0';
 
+    public string $centro_costo = '';
+
     public string $notas = '';
 
     public function mount(): void
@@ -286,6 +288,7 @@ class NuevoPedido extends Component
             'cliente_ciudad' => 'required|string|max:255',
             'direccion_entrega' => 'required|string|max:255',
             'envioCosto' => 'required|numeric|min:0',
+            'centro_costo' => 'required|string|in:Garzón,Bogotá,Neiva,Producción',
         ], [], [
             'numero' => 'número de orden',
             'fecha_pedido' => 'fecha del pedido',
@@ -294,6 +297,7 @@ class NuevoPedido extends Component
             'cliente_telefono' => 'celular',
             'cliente_ciudad' => 'ciudad',
             'direccion_entrega' => 'dirección de entrega',
+            'centro_costo' => 'centro de costos',
         ]);
 
         if (empty($this->cart)) {
@@ -334,6 +338,7 @@ class NuevoPedido extends Component
                 'descuento_monto' => $this->descuentoMonto,
                 'transportadora_id' => $this->transportadoraId,
                 'envio_costo' => (float) $this->envioCosto,
+                'centro_costo' => $this->centro_costo,
                 'total' => $this->total,
                 'puntos_generados' => $this->puntos,
                 'medio_pago' => $this->medio_pago,

@@ -149,6 +149,7 @@
                     <div><p class="text-xs text-gray-400">Transportadora</p><p class="text-gray-800 font-medium">{{ $this->pedidoDetalle->transportadora?->nombre ?? '—' }}</p></div>
                     <div><p class="text-xs text-gray-400">Número de guía</p><p class="text-gray-800 font-medium">{{ $this->pedidoDetalle->numero_guia ?: '—' }}</p></div>
                     <div><p class="text-xs text-gray-400">Número de factura</p><p class="text-gray-800 font-medium">{{ $this->pedidoDetalle->numero_factura ?: '—' }}</p></div>
+                    <div><p class="text-xs text-gray-400">Centro de costos</p><p class="text-gray-800 font-medium">{{ $this->pedidoDetalle->centro_costo ?: '—' }}</p></div>
                 </div>
 
                 <div class="border-t border-gray-100 pt-4 space-y-2">

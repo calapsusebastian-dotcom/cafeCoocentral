@@ -96,6 +96,8 @@
                         <span class="text-gray-800 font-medium text-right">{{ $pedido->medioPagoLabel() }}</span>
                         <span class="text-gray-400">Transportadora</span>
                         <span class="text-gray-800 font-medium text-right">{{ $pedido->transportadora?->nombre ?? '—' }}</span>
+                        <span class="text-gray-400">Centro de costos</span>
+                        <span class="text-gray-800 font-medium text-right">{{ $pedido->centro_costo ?: '—' }}</span>
                         <span class="text-gray-400 font-semibold">N.° de guía</span>
                         <span class="text-brand-700 font-bold text-right">{{ $pedido->numero_guia ?: '—' }}</span>
                     </div>

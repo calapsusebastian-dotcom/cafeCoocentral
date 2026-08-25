@@ -339,6 +339,21 @@
                         </div>
                         @error('envioCosto') <p class="text-xs text-red-500 mt-1 text-right">{{ $message }}</p> @enderror
                     </div>
+
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-gray-500 flex items-center gap-1 shrink-0">
+                            <x-heroicon-o-building-office-2 class="w-4 h-4" />
+                            Centro de costos
+                        </span>
+                        <select wire:model="centro_costo" class="flex-1 rounded-lg border border-gray-200 text-xs px-2 py-1.5 min-w-0">
+                            <option value="">Selecciona</option>
+                            <option value="Garzón">Garzón</option>
+                            <option value="Bogotá">Bogotá</option>
+                            <option value="Neiva">Neiva</option>
+                            <option value="Producción">Producción</option>
+                        </select>
+                    </div>
+                    @error('centro_costo') <p class="text-xs text-red-500 -mt-2 text-right">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="border-t border-gray-100 mt-4 pt-4 flex items-end justify-between">

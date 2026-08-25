@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
     'numero', 'destino', 'fecha_pedido', 'cliente_id', 'direccion_entrega', 'user_id', 'subtotal', 'descuento_id', 'descuento_monto',
-    'transportadora_id', 'numero_guia', 'despachado_at', 'numero_factura', 'facturado_at', 'envio_costo', 'total', 'puntos_generados',
+    'transportadora_id', 'numero_guia', 'despachado_at', 'numero_factura', 'facturado_at', 'envio_costo', 'centro_costo', 'total', 'puntos_generados',
     'medio_pago', 'notas', 'status',
 ])]
 class Pedido extends Model
