@@ -1,6 +1,6 @@
 <a
     href="{{ route('notificaciones.index') }}"
-    wire:poll.10s="verificarNuevas"
+    wire:poll.30s="verificarNuevas"
     class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 transition-colors"
 >
     <x-heroicon-o-bell class="w-5 h-5" />
