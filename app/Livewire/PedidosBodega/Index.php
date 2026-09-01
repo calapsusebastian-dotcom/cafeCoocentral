@@ -2,6 +2,7 @@
 
 namespace App\Livewire\PedidosBodega;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
 use App\Models\Notificacion;
 use App\Models\PedidoBodega;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 #[Layout('layouts::app', ['title' => 'Pedidos a Bodega', 'subtitle' => 'Solicitudes de reabastecimiento a tus bodegas', 'icon' => 'building-storefront'])]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, GuardaSoloLectura;
 
     public string $search = '';
 
@@ -68,6 +69,10 @@ class Index extends Component
 
     public function marcarRecibido(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $pedido = PedidoBodega::with('items')->findOrFail($id);
 
         if ($pedido->status === 'recibido') {
@@ -117,7 +122,7 @@ class Index extends Component
 
     public function cancelarPedido(int $id): void
     {
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || $this->bloquearSoloLectura()) {
             return;
         }
 
@@ -134,7 +139,7 @@ class Index extends Component
 
     public function eliminarPedido(int $id): void
     {
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || $this->bloquearSoloLectura()) {
             return;
         }
 

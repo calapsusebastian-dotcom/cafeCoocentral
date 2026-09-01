@@ -9,6 +9,7 @@ use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\PedidoItem;
 use App\Models\Producto;
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Transportadora;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Nuevo Pedido', 'subtitle' => 'Crea un nuevo pedido para tu cliente', 'icon' => 'shopping-cart'])]
 class NuevoPedido extends Component
 {
+    use GuardaSoloLectura;
+
     public string $numero = '';
 
     public string $destino = 'local';
@@ -65,6 +68,12 @@ class NuevoPedido extends Component
 
     public function mount(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('notificaciones.index');
+
+            return;
+        }
+
         $this->transportadoraId = Transportadora::where('activo', true)->first()?->id;
         $this->envioCosto = (string) (Transportadora::find($this->transportadoraId)?->costo ?? 0);
         $this->descuentoId = Descuento::where('nombre', 'Sin descuento')->first()?->id

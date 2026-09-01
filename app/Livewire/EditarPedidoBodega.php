@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Bodega;
 use App\Models\Notificacion;
 use App\Models\PedidoBodega;
@@ -18,6 +19,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Editar Pedido a Bodega', 'subtitle' => 'Actualiza esta solicitud antes de recibirla', 'icon' => 'building-storefront'])]
 class EditarPedidoBodega extends Component
 {
+    use GuardaSoloLectura;
+
     public PedidoBodega $pedidoBodega;
 
     public string $numero = '';
@@ -34,6 +37,12 @@ class EditarPedidoBodega extends Component
 
     public function mount(PedidoBodega $pedidoBodega): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('pedidos-bodega.index');
+
+            return;
+        }
+
         if ($pedidoBodega->status !== 'pendiente') {
             session()->flash('error', "El pedido #{$pedidoBodega->numero} ya no se puede editar porque está \"{$pedidoBodega->status}\".");
 

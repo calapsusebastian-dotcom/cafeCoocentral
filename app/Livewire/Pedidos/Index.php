@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pedidos;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
 use App\Models\Notificacion;
 use App\Models\Pedido;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 #[Layout('layouts::app', ['title' => 'Pedidos', 'subtitle' => 'Consulta y da seguimiento a los pedidos de tus clientes', 'icon' => 'clipboard-document-list'])]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, GuardaSoloLectura;
 
     public string $search = '';
 
@@ -108,6 +109,10 @@ class Index extends Component
 
     public function confirmarDespacho(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $this->validate([
             'numero_guia' => 'required|string|max:255',
         ], [], ['numero_guia' => 'número de guía']);
@@ -147,6 +152,10 @@ class Index extends Component
 
     public function confirmarFactura(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $this->validate([
             'numero_factura' => 'required|string|max:255',
         ], [], ['numero_factura' => 'número de factura']);
@@ -171,7 +180,7 @@ class Index extends Component
 
     public function eliminarPedido(int $id): void
     {
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || $this->bloquearSoloLectura()) {
             return;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Rutas;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Notificacion;
 use App\Models\Ruta;
 use App\Models\RutaCliente;
@@ -14,7 +15,7 @@ use Livewire\WithPagination;
 #[Layout('layouts::app', ['title' => 'Rutas', 'subtitle' => 'Organiza la entrega de pedidos por clientes y productos', 'icon' => 'map'])]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, GuardaSoloLectura;
 
     public string $search = '';
 
@@ -94,6 +95,10 @@ class Index extends Component
 
     public function marcarRecibida(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $ruta = Ruta::findOrFail($id);
 
         if ($ruta->status !== 'pendiente') {
@@ -135,6 +140,10 @@ class Index extends Component
 
     public function confirmarDespacho(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $this->validate([
             'conductor_nombre' => 'required|string|max:255',
             'conductor_cc' => 'required|string|max:50',
@@ -173,6 +182,10 @@ class Index extends Component
 
     public function marcarEntregada(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $ruta = Ruta::findOrFail($id);
 
         if ($ruta->status !== 'despachada') {
@@ -196,7 +209,7 @@ class Index extends Component
 
     public function cancelarRuta(int $id): void
     {
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || $this->bloquearSoloLectura()) {
             return;
         }
 
@@ -213,7 +226,7 @@ class Index extends Component
 
     public function eliminarRuta(int $id): void
     {
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || $this->bloquearSoloLectura()) {
             return;
         }
 
@@ -239,6 +252,10 @@ class Index extends Component
 
     public function confirmarFactura(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $this->validate([
             'numero_factura' => 'required|string|max:255',
         ], [], ['numero_factura' => 'número de factura']);

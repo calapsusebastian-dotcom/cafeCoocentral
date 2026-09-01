@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Notificacion;
 use App\Models\Produccion;
 use App\Models\ProduccionItem;
@@ -17,6 +18,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Editar Producción', 'subtitle' => 'Actualiza este registro antes de trasladarlo', 'icon' => 'fire'])]
 class EditarProduccion extends Component
 {
+    use GuardaSoloLectura;
+
     public Produccion $produccion;
 
     public string $numero = '';
@@ -31,6 +34,12 @@ class EditarProduccion extends Component
 
     public function mount(Produccion $produccion): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('produccion.index');
+
+            return;
+        }
+
         if ($produccion->status !== 'enviado') {
             session()->flash('error', "La producción #{$produccion->numero} ya no se puede editar porque está \"{$produccion->status}\".");
 

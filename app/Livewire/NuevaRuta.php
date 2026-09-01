@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Cliente;
 use App\Models\Notificacion;
 use App\Models\Producto;
@@ -19,6 +20,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Nueva Ruta', 'subtitle' => 'Organiza los clientes y productos a entregar en esta ruta', 'icon' => 'map'])]
 class NuevaRuta extends Component
 {
+    use GuardaSoloLectura;
+
     public string $numero = '';
 
     public string $nombre = '';
@@ -45,6 +48,12 @@ class NuevaRuta extends Component
 
     public function mount(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('rutas.index');
+
+            return;
+        }
+
         $this->fecha = now()->format('Y-m-d');
         $this->numero = 'RUT-'.str_pad((string) ((Ruta::max('id') ?? 0) + 1), 4, '0', STR_PAD_LEFT);
     }

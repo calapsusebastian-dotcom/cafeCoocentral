@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Bodegas;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Bodega;
 use Illuminate\Database\QueryException;
 use Livewire\Attributes\Computed;
@@ -11,6 +12,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Bodegas', 'subtitle' => 'Administra las bodegas que abastecen tu inventario', 'icon' => 'building-office-2'])]
 class Index extends Component
 {
+    use GuardaSoloLectura;
+
     public bool $showBodegaModal = false;
 
     public ?int $editingBodegaId = null;
@@ -48,6 +51,10 @@ class Index extends Component
 
     public function guardarBodega(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $data = $this->validate([
             'bodega_nombre' => 'required|string|max:255',
             'bodega_direccion' => 'nullable|string|max:255',
@@ -68,12 +75,20 @@ class Index extends Component
 
     public function toggleBodega(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $bodega = Bodega::findOrFail($id);
         $bodega->update(['activo' => ! $bodega->activo]);
     }
 
     public function eliminarBodega(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         try {
             Bodega::whereKey($id)->delete();
             session()->flash('success', 'Bodega eliminada correctamente.');

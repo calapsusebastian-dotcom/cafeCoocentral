@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Produccion;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
 use App\Models\Notificacion;
 use App\Models\Produccion;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 #[Layout('layouts::app', ['title' => 'Producción', 'subtitle' => 'Registra la producción diaria y su traslado a bodega', 'icon' => 'fire'])]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, GuardaSoloLectura;
 
     public string $search = '';
 
@@ -91,6 +92,10 @@ class Index extends Component
 
     public function confirmarTraslado(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $this->validate([
             'numero_imov' => 'required|string|max:255',
         ], [], [
@@ -149,7 +154,7 @@ class Index extends Component
 
     public function eliminarProduccion(int $id): void
     {
-        if (! Auth::user()->is_admin) {
+        if (! Auth::user()->is_admin || $this->bloquearSoloLectura()) {
             return;
         }
 

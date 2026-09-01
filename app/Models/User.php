@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'avatar_path', 'is_admin', 'modulos'])]
+#[Fillable(['name', 'email', 'password', 'role', 'avatar_path', 'is_admin', 'solo_lectura', 'modulos'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,6 +28,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'solo_lectura' => 'boolean',
             'modulos' => 'array',
         ];
     }
@@ -40,5 +41,15 @@ class User extends Authenticatable
     public function puedeVer(string $moduloClave): bool
     {
         return $this->is_admin || in_array($moduloClave, $this->modulos ?? [], true);
+    }
+
+    /**
+     * Un usuario de solo lectura puede navegar y ver cualquier módulo al
+     * que tenga acceso, pero ninguna acción que cree, edite o elimine
+     * información debe ejecutarse para él (ver [[GuardaSoloLectura]]).
+     */
+    public function puedeEscribir(): bool
+    {
+        return ! $this->solo_lectura;
     }
 }

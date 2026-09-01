@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Productos;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Producto;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -12,7 +13,7 @@ use Livewire\WithPagination;
 #[Layout('layouts::app', ['title' => 'Productos', 'subtitle' => 'Gestiona tu catálogo de café', 'icon' => 'cube'])]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, GuardaSoloLectura;
 
     public string $search = '';
 
@@ -75,6 +76,10 @@ class Index extends Component
 
     public function guardar(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $data = $this->validate([
             'nombre' => 'required|string|max:255',
             'categoria' => 'required|string|max:255',
@@ -93,6 +98,10 @@ class Index extends Component
 
     public function eliminar(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         Producto::whereKey($id)->delete();
     }
 

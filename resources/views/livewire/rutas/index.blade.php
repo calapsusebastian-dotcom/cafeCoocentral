@@ -1,9 +1,11 @@
-<x-slot:headerActions>
-    <a href="{{ route('rutas.nueva') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
-        <x-heroicon-o-plus class="w-4 h-4" />
-        Nueva ruta
-    </a>
-</x-slot:headerActions>
+@unless (auth()->user()->solo_lectura)
+    <x-slot:headerActions>
+        <a href="{{ route('rutas.nueva') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
+            <x-heroicon-o-plus class="w-4 h-4" />
+            Nueva ruta
+        </a>
+    </x-slot:headerActions>
+@endunless
 
 <div>
     @if (session('success'))
@@ -81,6 +83,7 @@
                                 <a href="{{ route('rutas.imprimir', $ruta) }}" target="_blank" title="Imprimir ruta" class="text-gray-400 hover:text-brand-600">
                                     <x-heroicon-o-printer class="w-4 h-4 inline" />
                                 </a>
+                                @unless (auth()->user()->solo_lectura)
                                 @if ($ruta->status === 'pendiente' || $ruta->status === 'recibida')
                                     <a href="{{ route('rutas.editar', $ruta) }}" title="Editar ruta" class="text-gray-400 hover:text-brand-600">
                                         <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
@@ -114,6 +117,7 @@
                                         </button>
                                     @endif
                                 @endif
+                                @endunless
                                 @if (auth()->user()->is_admin)
                                     <button
                                         type="button"

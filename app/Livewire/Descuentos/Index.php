@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Descuentos;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Descuento;
 use App\Models\Transportadora;
 use Livewire\Attributes\Computed;
@@ -11,6 +12,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Descuentos', 'subtitle' => 'Administra reglas de descuento y transportadoras', 'icon' => 'tag'])]
 class Index extends Component
 {
+    use GuardaSoloLectura;
+
     public bool $showDescuentoModal = false;
 
     public ?int $editingDescuentoId = null;
@@ -60,6 +63,10 @@ class Index extends Component
 
     public function guardarDescuento(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $data = $this->validate([
             'descuento_nombre' => 'required|string|max:255',
             'descuento_tipo' => 'required|in:fijo,porcentaje',
@@ -78,12 +85,20 @@ class Index extends Component
 
     public function toggleDescuento(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $descuento = Descuento::findOrFail($id);
         $descuento->update(['activo' => ! $descuento->activo]);
     }
 
     public function eliminarDescuento(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         Descuento::whereKey($id)->delete();
     }
 
@@ -104,6 +119,10 @@ class Index extends Component
 
     public function guardarTransportadora(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $data = $this->validate([
             'transportadora_nombre' => 'required|string|max:255',
             'transportadora_costo' => 'required|numeric|min:0',
@@ -120,12 +139,20 @@ class Index extends Component
 
     public function toggleTransportadora(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $transportadora = Transportadora::findOrFail($id);
         $transportadora->update(['activo' => ! $transportadora->activo]);
     }
 
     public function eliminarTransportadora(int $id): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         Transportadora::whereKey($id)->delete();
     }
 

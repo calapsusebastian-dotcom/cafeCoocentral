@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Cliente;
 use App\Models\Notificacion;
 use App\Models\Producto;
@@ -19,6 +20,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Editar Ruta', 'subtitle' => 'Actualiza esta ruta antes de recibirla', 'icon' => 'map'])]
 class EditarRuta extends Component
 {
+    use GuardaSoloLectura;
+
     public Ruta $ruta;
 
     public string $numero = '';
@@ -47,6 +50,12 @@ class EditarRuta extends Component
 
     public function mount(Ruta $ruta): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('rutas.index');
+
+            return;
+        }
+
         if (! in_array($ruta->status, ['pendiente', 'recibida'], true)) {
             session()->flash('error', "La ruta #{$ruta->numero} ya no se puede editar porque está \"{$ruta->status}\".");
 

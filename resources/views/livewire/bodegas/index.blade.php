@@ -9,10 +9,12 @@
     <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
         <div class="flex items-center justify-between mb-5">
             <h2 class="text-sm font-semibold text-gray-900">Bodegas</h2>
-            <button type="button" wire:click="nuevaBodega" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
-                <x-heroicon-o-plus class="w-4 h-4" />
-                Nueva bodega
-            </button>
+            @unless (auth()->user()->solo_lectura)
+                <button type="button" wire:click="nuevaBodega" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
+                    <x-heroicon-o-plus class="w-4 h-4" />
+                    Nueva bodega
+                </button>
+            @endunless
         </div>
 
         <div class="space-y-2">
@@ -26,19 +28,22 @@
                         @endif
                     </div>
                     <div class="flex items-center gap-3 shrink-0">
-                        <button type="button" wire:click="toggleBodega({{ $bodega->id }})" @class([
+                        <button type="button" wire:click="toggleBodega({{ $bodega->id }})" @disabled(auth()->user()->solo_lectura) @class([
                             'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
                             'bg-brand-600' => $bodega->activo,
                             'bg-gray-200' => ! $bodega->activo,
+                            'opacity-50 cursor-not-allowed' => auth()->user()->solo_lectura,
                         ])>
                             <span @class(['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', 'translate-x-4' => $bodega->activo, 'translate-x-1' => ! $bodega->activo])></span>
                         </button>
-                        <button type="button" wire:click="editarBodega({{ $bodega->id }})" class="text-gray-400 hover:text-brand-600">
-                            <x-heroicon-o-pencil-square class="w-4 h-4" />
-                        </button>
-                        <button type="button" wire:click="eliminarBodega({{ $bodega->id }})" wire:confirm="¿Eliminar esta bodega?" class="text-gray-400 hover:text-red-500">
-                            <x-heroicon-o-trash class="w-4 h-4" />
-                        </button>
+                        @unless (auth()->user()->solo_lectura)
+                            <button type="button" wire:click="editarBodega({{ $bodega->id }})" class="text-gray-400 hover:text-brand-600">
+                                <x-heroicon-o-pencil-square class="w-4 h-4" />
+                            </button>
+                            <button type="button" wire:click="eliminarBodega({{ $bodega->id }})" wire:confirm="¿Eliminar esta bodega?" class="text-gray-400 hover:text-red-500">
+                                <x-heroicon-o-trash class="w-4 h-4" />
+                            </button>
+                        @endunless
                     </div>
                 </div>
             @empty

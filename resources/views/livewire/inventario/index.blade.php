@@ -78,46 +78,48 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
-            <h2 class="text-sm font-semibold text-gray-900 mb-4">Registrar movimiento</h2>
+        @unless (auth()->user()->solo_lectura)
+            <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
+                <h2 class="text-sm font-semibold text-gray-900 mb-4">Registrar movimiento</h2>
 
-            <div class="space-y-4">
-                <label class="block">
-                    <span class="text-xs text-gray-400">Producto</span>
-                    <select wire:model="productoId" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200">
-                        <option value="">Selecciona un producto</option>
-                        @foreach ($this->productos as $producto)
-                            <option value="{{ $producto->id }}">{{ $producto->nombre }} ({{ $producto->presentacion }})</option>
-                        @endforeach
-                    </select>
-                    @error('productoId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </label>
+                <div class="space-y-4">
+                    <label class="block">
+                        <span class="text-xs text-gray-400">Producto</span>
+                        <select wire:model="productoId" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200">
+                            <option value="">Selecciona un producto</option>
+                            @foreach ($this->productos as $producto)
+                                <option value="{{ $producto->id }}">{{ $producto->nombre }} ({{ $producto->presentacion }})</option>
+                            @endforeach
+                        </select>
+                        @error('productoId') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </label>
 
-                <label class="block">
-                    <span class="text-xs text-gray-400">Tipo</span>
-                    <select wire:model="tipo" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200">
-                        <option value="entrada">Entrada</option>
-                        <option value="salida">Salida</option>
-                    </select>
-                </label>
+                    <label class="block">
+                        <span class="text-xs text-gray-400">Tipo</span>
+                        <select wire:model="tipo" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200">
+                            <option value="entrada">Entrada</option>
+                            <option value="salida">Salida</option>
+                        </select>
+                    </label>
 
-                <label class="block">
-                    <span class="text-xs text-gray-400">Cantidad</span>
-                    <input type="number" wire:model="cantidad" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200" />
-                    @error('cantidad') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </label>
+                    <label class="block">
+                        <span class="text-xs text-gray-400">Cantidad</span>
+                        <input type="number" wire:model="cantidad" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200" />
+                        @error('cantidad') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </label>
 
-                <label class="block">
-                    <span class="text-xs text-gray-400">Motivo</span>
-                    <input type="text" wire:model="motivo" placeholder="Ej. Ajuste de inventario" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200" />
-                    @error('motivo') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
-                </label>
+                    <label class="block">
+                        <span class="text-xs text-gray-400">Motivo</span>
+                        <input type="text" wire:model="motivo" placeholder="Ej. Ajuste de inventario" class="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200" />
+                        @error('motivo') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </label>
 
-                <button type="button" wire:click="registrarMovimiento" class="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-600 text-white font-medium py-2.5 hover:bg-brand-700 transition-colors">
-                    <x-heroicon-o-plus class="w-4 h-4" />
-                    Registrar movimiento
-                </button>
+                    <button type="button" wire:click="registrarMovimiento" class="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-600 text-white font-medium py-2.5 hover:bg-brand-700 transition-colors">
+                        <x-heroicon-o-plus class="w-4 h-4" />
+                        Registrar movimiento
+                    </button>
+                </div>
             </div>
-        </div>
+        @endunless
     </div>
 </div>

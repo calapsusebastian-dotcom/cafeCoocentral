@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Bodega;
 use App\Models\Notificacion;
 use App\Models\PedidoBodega;
@@ -18,6 +19,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Nuevo Pedido a Bodega', 'subtitle' => 'Solicita productos a una bodega para reabastecer inventario', 'icon' => 'building-storefront'])]
 class NuevoPedidoBodega extends Component
 {
+    use GuardaSoloLectura;
+
     public string $numero = '';
 
     public string $fecha_pedido = '';
@@ -32,6 +35,12 @@ class NuevoPedidoBodega extends Component
 
     public function mount(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('pedidos-bodega.index');
+
+            return;
+        }
+
         $this->fecha_pedido = now()->format('Y-m-d');
         $this->numero = 'BOD-'.str_pad((string) ((PedidoBodega::max('id') ?? 0) + 1), 4, '0', STR_PAD_LEFT);
         $this->bodegaId = Bodega::where('activo', true)->first()?->id;

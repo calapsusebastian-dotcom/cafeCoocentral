@@ -9,6 +9,7 @@ use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\PedidoItem;
 use App\Models\Producto;
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Transportadora;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Editar Pedido', 'subtitle' => 'Actualiza la información de este pedido', 'icon' => 'pencil-square'])]
 class EditarPedido extends Component
 {
+    use GuardaSoloLectura;
+
     public Pedido $pedido;
 
     public array $originalItems = [];
@@ -73,6 +76,12 @@ class EditarPedido extends Component
 
     public function mount(Pedido $pedido): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('notificaciones.index');
+
+            return;
+        }
+
         $pedido->load(['items', 'cliente']);
 
         $this->pedido = $pedido;

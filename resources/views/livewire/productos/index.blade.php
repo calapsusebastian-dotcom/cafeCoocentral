@@ -9,10 +9,12 @@
                 <x-heroicon-o-magnifying-glass class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input type="text" wire:model.live.debounce.300ms="search" placeholder="Buscar por nombre, SKU o categoría..." class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-200" />
             </div>
-            <button type="button" wire:click="nuevo" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors shrink-0">
-                <x-heroicon-o-plus class="w-4 h-4" />
-                Nuevo producto
-            </button>
+            @unless (auth()->user()->solo_lectura)
+                <button type="button" wire:click="nuevo" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors shrink-0">
+                    <x-heroicon-o-plus class="w-4 h-4" />
+                    Nuevo producto
+                </button>
+            @endunless
         </div>
 
         <div class="overflow-x-auto -mx-2">
@@ -56,12 +58,14 @@
                                 </span>
                             </td>
                             <td class="px-2 py-3 text-right space-x-2">
-                                <button type="button" wire:click="editar({{ $producto->id }})" class="text-gray-400 hover:text-brand-600">
-                                    <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
-                                </button>
-                                <button type="button" wire:click="eliminar({{ $producto->id }})" wire:confirm="¿Eliminar este producto?" class="text-gray-400 hover:text-red-500">
-                                    <x-heroicon-o-trash class="w-4 h-4 inline" />
-                                </button>
+                                @unless (auth()->user()->solo_lectura)
+                                    <button type="button" wire:click="editar({{ $producto->id }})" class="text-gray-400 hover:text-brand-600">
+                                        <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
+                                    </button>
+                                    <button type="button" wire:click="eliminar({{ $producto->id }})" wire:confirm="¿Eliminar este producto?" class="text-gray-400 hover:text-red-500">
+                                        <x-heroicon-o-trash class="w-4 h-4 inline" />
+                                    </button>
+                                @endunless
                             </td>
                         </tr>
                     @empty

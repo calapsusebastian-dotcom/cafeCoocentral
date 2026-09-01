@@ -1,9 +1,11 @@
-<x-slot:headerActions>
-    <a href="{{ route('produccion.nueva') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
-        <x-heroicon-o-plus class="w-4 h-4" />
-        Nueva producción
-    </a>
-</x-slot:headerActions>
+@unless (auth()->user()->solo_lectura)
+    <x-slot:headerActions>
+        <a href="{{ route('produccion.nueva') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
+            <x-heroicon-o-plus class="w-4 h-4" />
+            Nueva producción
+        </a>
+    </x-slot:headerActions>
+@endunless
 
 <div>
     @if (session('success'))
@@ -59,14 +61,16 @@
                                 <a href="{{ route('produccion.imprimir', $produccion) }}" target="_blank" title="Imprimir" class="text-gray-400 hover:text-brand-600">
                                     <x-heroicon-o-printer class="w-4 h-4 inline" />
                                 </a>
-                                @if ($produccion->status === 'enviado')
-                                    <a href="{{ route('produccion.editar', $produccion) }}" title="Editar" class="text-gray-400 hover:text-brand-600">
-                                        <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
-                                    </a>
-                                    <button type="button" wire:click="abrirTraslado({{ $produccion->id }})" title="Marcar como trasladado" class="text-gray-400 hover:text-emerald-600">
-                                        <x-heroicon-o-truck class="w-4 h-4 inline" />
-                                    </button>
-                                @endif
+                                @unless (auth()->user()->solo_lectura)
+                                    @if ($produccion->status === 'enviado')
+                                        <a href="{{ route('produccion.editar', $produccion) }}" title="Editar" class="text-gray-400 hover:text-brand-600">
+                                            <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
+                                        </a>
+                                        <button type="button" wire:click="abrirTraslado({{ $produccion->id }})" title="Marcar como trasladado" class="text-gray-400 hover:text-emerald-600">
+                                            <x-heroicon-o-truck class="w-4 h-4 inline" />
+                                        </button>
+                                    @endif
+                                @endunless
                                 @if (auth()->user()->is_admin)
                                     <button
                                         type="button"
@@ -108,12 +112,14 @@
                             <x-heroicon-o-printer class="w-4 h-4" />
                             Imprimir
                         </a>
-                        @if ($this->produccionDetalle->status === 'enviado')
-                            <a href="{{ route('produccion.editar', $this->produccionDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
-                                <x-heroicon-o-pencil-square class="w-4 h-4" />
-                                Editar
-                            </a>
-                        @endif
+                        @unless (auth()->user()->solo_lectura)
+                            @if ($this->produccionDetalle->status === 'enviado')
+                                <a href="{{ route('produccion.editar', $this->produccionDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
+                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                    Editar
+                                </a>
+                            @endif
+                        @endunless
                         @if (auth()->user()->is_admin)
                             <button type="button" wire:click="eliminarProduccion({{ $this->produccionDetalle->id }})" wire:confirm="¿Eliminar la producción #{{ $this->produccionDetalle->numero }}? Esta acción no se puede deshacer." class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 font-medium">
                                 <x-heroicon-o-trash class="w-4 h-4" />

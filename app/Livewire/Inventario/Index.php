@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Inventario;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,7 @@ use Livewire\WithPagination;
 #[Layout('layouts::app', ['title' => 'Inventario', 'subtitle' => 'Consulta el stock y los movimientos de tus productos', 'icon' => 'archive-box'])]
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, GuardaSoloLectura;
 
     public string $search = '';
 
@@ -48,6 +49,10 @@ class Index extends Component
 
     public function registrarMovimiento(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            return;
+        }
+
         $data = $this->validate([
             'productoId' => 'required|exists:productos,id',
             'tipo' => 'required|in:entrada,salida',

@@ -41,6 +41,9 @@
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-brand-50 text-brand-700">Administrador · todo</span>
                                 @else
                                     <div class="flex flex-wrap gap-1">
+                                        @if ($usuario->solo_lectura)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700">Solo lectura</span>
+                                        @endif
                                         @forelse ($usuario->modulos ?? [] as $clave)
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-100 text-gray-600">{{ $this->modulosDisponibles[$clave]['label'] ?? $clave }}</span>
                                         @empty
@@ -102,6 +105,11 @@
                 </label>
 
                 @unless ($is_admin)
+                    <label class="flex items-center gap-2 mt-3">
+                        <input type="checkbox" wire:model="solo_lectura" class="rounded border-gray-300 text-brand-600 focus:ring-brand-200" />
+                        <span class="text-sm text-gray-700 font-medium">Solo lectura (no puede crear, editar ni eliminar nada)</span>
+                    </label>
+
                     <div class="mt-4">
                         <span class="text-xs text-gray-400">Módulos permitidos</span>
                         <div class="mt-2 grid grid-cols-2 gap-2">

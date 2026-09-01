@@ -3,10 +3,12 @@
         <x-heroicon-o-building-office-2 class="w-4 h-4" />
         Gestionar bodegas
     </a>
-    <a href="{{ route('pedidos-bodega.nuevo') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
-        <x-heroicon-o-plus class="w-4 h-4" />
-        Nuevo pedido
-    </a>
+    @unless (auth()->user()->solo_lectura)
+        <a href="{{ route('pedidos-bodega.nuevo') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
+            <x-heroicon-o-plus class="w-4 h-4" />
+            Nuevo pedido
+        </a>
+    @endunless
 </x-slot:headerActions>
 
 <div>
@@ -60,19 +62,21 @@
                                 <a href="{{ route('pedidos-bodega.imprimir', $pedido) }}" target="_blank" title="Imprimir" class="text-gray-400 hover:text-brand-600">
                                     <x-heroicon-o-printer class="w-4 h-4 inline" />
                                 </a>
-                                @if ($pedido->status === 'pendiente')
-                                    <a href="{{ route('pedidos-bodega.editar', $pedido) }}" title="Editar" class="text-gray-400 hover:text-brand-600">
-                                        <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
-                                    </a>
-                                    <button type="button" wire:click="marcarRecibido({{ $pedido->id }})" wire:confirm="¿Marcar este pedido como recibido? Esto sumará las cantidades al inventario." title="Marcar como recibido" class="text-gray-400 hover:text-emerald-600">
-                                        <x-heroicon-o-archive-box-arrow-down class="w-4 h-4 inline" />
-                                    </button>
-                                    @if (auth()->user()->is_admin)
-                                        <button type="button" wire:click="cancelarPedido({{ $pedido->id }})" wire:confirm="¿Cancelar este pedido a bodega?" title="Cancelar pedido" class="text-gray-400 hover:text-red-500">
-                                            <x-heroicon-o-x-mark class="w-4 h-4 inline" />
+                                @unless (auth()->user()->solo_lectura)
+                                    @if ($pedido->status === 'pendiente')
+                                        <a href="{{ route('pedidos-bodega.editar', $pedido) }}" title="Editar" class="text-gray-400 hover:text-brand-600">
+                                            <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
+                                        </a>
+                                        <button type="button" wire:click="marcarRecibido({{ $pedido->id }})" wire:confirm="¿Marcar este pedido como recibido? Esto sumará las cantidades al inventario." title="Marcar como recibido" class="text-gray-400 hover:text-emerald-600">
+                                            <x-heroicon-o-archive-box-arrow-down class="w-4 h-4 inline" />
                                         </button>
+                                        @if (auth()->user()->is_admin)
+                                            <button type="button" wire:click="cancelarPedido({{ $pedido->id }})" wire:confirm="¿Cancelar este pedido a bodega?" title="Cancelar pedido" class="text-gray-400 hover:text-red-500">
+                                                <x-heroicon-o-x-mark class="w-4 h-4 inline" />
+                                            </button>
+                                        @endif
                                     @endif
-                                @endif
+                                @endunless
                                 @if (auth()->user()->is_admin)
                                     <button
                                         type="button"
@@ -114,18 +118,20 @@
                             <x-heroicon-o-printer class="w-4 h-4" />
                             Imprimir
                         </a>
-                        @if ($this->pedidoDetalle->status === 'pendiente')
-                            <a href="{{ route('pedidos-bodega.editar', $this->pedidoDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
-                                <x-heroicon-o-pencil-square class="w-4 h-4" />
-                                Editar
-                            </a>
-                            @if (auth()->user()->is_admin)
-                                <button type="button" wire:click="cancelarPedido({{ $this->pedidoDetalle->id }})" wire:confirm="¿Cancelar este pedido a bodega?" class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 font-medium">
-                                    <x-heroicon-o-x-mark class="w-4 h-4" />
-                                    Cancelar
-                                </button>
+                        @unless (auth()->user()->solo_lectura)
+                            @if ($this->pedidoDetalle->status === 'pendiente')
+                                <a href="{{ route('pedidos-bodega.editar', $this->pedidoDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
+                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                    Editar
+                                </a>
+                                @if (auth()->user()->is_admin)
+                                    <button type="button" wire:click="cancelarPedido({{ $this->pedidoDetalle->id }})" wire:confirm="¿Cancelar este pedido a bodega?" class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 font-medium">
+                                        <x-heroicon-o-x-mark class="w-4 h-4" />
+                                        Cancelar
+                                    </button>
+                                @endif
                             @endif
-                        @endif
+                        @endunless
                         @if (auth()->user()->is_admin)
                             <button type="button" wire:click="eliminarPedido({{ $this->pedidoDetalle->id }})" wire:confirm="¿Eliminar el pedido #{{ $this->pedidoDetalle->numero }}? Esta acción no se puede deshacer." class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-500 font-medium">
                                 <x-heroicon-o-trash class="w-4 h-4" />

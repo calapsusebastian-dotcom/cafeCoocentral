@@ -32,6 +32,8 @@ class Index extends Component
 
     public bool $is_admin = false;
 
+    public bool $solo_lectura = false;
+
     public array $modulos = [];
 
     public function updatingSearch(): void
@@ -62,6 +64,7 @@ class Index extends Component
         $this->reset(['editingId', 'name', 'email', 'password', 'modulos']);
         $this->role = 'Vendedor';
         $this->is_admin = false;
+        $this->solo_lectura = false;
         $this->showModal = true;
     }
 
@@ -74,6 +77,7 @@ class Index extends Component
         $this->password = '';
         $this->role = $usuario->role ?? 'Vendedor';
         $this->is_admin = $usuario->is_admin;
+        $this->solo_lectura = $usuario->solo_lectura;
         $this->modulos = $usuario->modulos ?? [];
         $this->showModal = true;
     }
@@ -86,6 +90,7 @@ class Index extends Component
             'password' => $this->editingId ? 'nullable|string|min:6' : 'required|string|min:6',
             'role' => 'required|string|max:255',
             'is_admin' => 'boolean',
+            'solo_lectura' => 'boolean',
             'modulos' => 'array',
             'modulos.*' => Rule::in(Modulos::claves()),
         ]);
@@ -95,6 +100,8 @@ class Index extends Component
             'email' => $data['email'],
             'role' => $data['role'],
             'is_admin' => $data['is_admin'],
+            // Un admin siempre tiene acceso total; "solo lectura" no aplica.
+            'solo_lectura' => $data['is_admin'] ? false : $data['solo_lectura'],
             'modulos' => $data['is_admin'] ? [] : $data['modulos'],
         ];
 

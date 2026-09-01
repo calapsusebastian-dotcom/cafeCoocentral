@@ -54,16 +54,18 @@
                                 <button type="button" wire:click="verPedido({{ $pedido->id }})" class="text-gray-400 hover:text-brand-600">
                                     <x-heroicon-o-eye class="w-4 h-4 inline" />
                                 </button>
-                                <a href="{{ route('pedidos.editar', $pedido) }}" class="text-gray-400 hover:text-brand-600">
-                                    <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
-                                </a>
-                                @unless ($pedido->status === 'cancelado')
-                                    <button type="button" wire:click="abrirDespacho({{ $pedido->id }})" title="Marcar como despachado" class="text-gray-400 hover:text-brand-600">
-                                        <x-heroicon-o-truck class="w-4 h-4 inline" />
-                                    </button>
-                                    <button type="button" wire:click="abrirFactura({{ $pedido->id }})" title="{{ $pedido->numero_factura ? 'Editar factura' : 'Facturar pedido' }}" class="text-gray-400 hover:text-brand-600">
-                                        <x-heroicon-o-document-text class="w-4 h-4 inline" />
-                                    </button>
+                                @unless (auth()->user()->solo_lectura)
+                                    <a href="{{ route('pedidos.editar', $pedido) }}" class="text-gray-400 hover:text-brand-600">
+                                        <x-heroicon-o-pencil-square class="w-4 h-4 inline" />
+                                    </a>
+                                    @unless ($pedido->status === 'cancelado')
+                                        <button type="button" wire:click="abrirDespacho({{ $pedido->id }})" title="Marcar como despachado" class="text-gray-400 hover:text-brand-600">
+                                            <x-heroicon-o-truck class="w-4 h-4 inline" />
+                                        </button>
+                                        <button type="button" wire:click="abrirFactura({{ $pedido->id }})" title="{{ $pedido->numero_factura ? 'Editar factura' : 'Facturar pedido' }}" class="text-gray-400 hover:text-brand-600">
+                                            <x-heroicon-o-document-text class="w-4 h-4 inline" />
+                                        </button>
+                                    @endunless
                                 @endunless
                                 @if (auth()->user()->is_admin)
                                     <button
@@ -105,10 +107,12 @@
                             <x-heroicon-o-printer class="w-4 h-4" />
                             Imprimir
                         </a>
-                        <a href="{{ route('pedidos.editar', $this->pedidoDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
-                            <x-heroicon-o-pencil-square class="w-4 h-4" />
-                            Editar
-                        </a>
+                        @unless (auth()->user()->solo_lectura)
+                            <a href="{{ route('pedidos.editar', $this->pedidoDetalle) }}" class="flex items-center gap-1.5 text-sm text-brand-600 hover:text-brand-700 font-medium">
+                                <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                Editar
+                            </a>
+                        @endunless
                         <button type="button" wire:click="cerrarModal" class="text-gray-400 hover:text-gray-600">
                             <x-heroicon-o-x-mark class="w-5 h-5" />
                         </button>

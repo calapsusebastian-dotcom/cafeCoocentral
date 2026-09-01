@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Notificacion;
 use App\Models\Produccion;
 use App\Models\ProduccionItem;
@@ -17,6 +18,8 @@ use Livewire\Component;
 #[Layout('layouts::app', ['title' => 'Nueva Producción', 'subtitle' => 'Registra los productos producidos hoy', 'icon' => 'fire'])]
 class NuevaProduccion extends Component
 {
+    use GuardaSoloLectura;
+
     public string $numero = '';
 
     public string $fecha_produccion = '';
@@ -29,6 +32,12 @@ class NuevaProduccion extends Component
 
     public function mount(): void
     {
+        if ($this->bloquearSoloLectura()) {
+            $this->redirectRoute('produccion.index');
+
+            return;
+        }
+
         $this->fecha_produccion = now()->format('Y-m-d');
         $this->numero = 'PROD-'.str_pad((string) ((Produccion::max('id') ?? 0) + 1), 4, '0', STR_PAD_LEFT);
     }

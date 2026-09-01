@@ -7,10 +7,12 @@
         <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-sm font-semibold text-gray-900">Descuentos</h2>
-                <button type="button" wire:click="nuevoDescuento" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 text-white text-xs font-medium hover:bg-brand-700 transition-colors">
-                    <x-heroicon-o-plus class="w-4 h-4" />
-                    Nuevo
-                </button>
+                @unless (auth()->user()->solo_lectura)
+                    <button type="button" wire:click="nuevoDescuento" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 text-white text-xs font-medium hover:bg-brand-700 transition-colors">
+                        <x-heroicon-o-plus class="w-4 h-4" />
+                        Nuevo
+                    </button>
+                @endunless
             </div>
 
             <div class="space-y-2">
@@ -21,19 +23,22 @@
                             <p class="text-xs text-gray-400">{{ $descuento->tipo === 'porcentaje' ? $descuento->valor.'%' : '$'.number_format($descuento->valor, 0, ',', '.') }}</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button type="button" wire:click="toggleDescuento({{ $descuento->id }})" @class([
+                            <button type="button" wire:click="toggleDescuento({{ $descuento->id }})" @disabled(auth()->user()->solo_lectura) @class([
                                 'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
                                 'bg-brand-600' => $descuento->activo,
                                 'bg-gray-200' => ! $descuento->activo,
+                                'opacity-50 cursor-not-allowed' => auth()->user()->solo_lectura,
                             ])>
                                 <span @class(['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', 'translate-x-4' => $descuento->activo, 'translate-x-1' => ! $descuento->activo])></span>
                             </button>
-                            <button type="button" wire:click="editarDescuento({{ $descuento->id }})" class="text-gray-400 hover:text-brand-600">
-                                <x-heroicon-o-pencil-square class="w-4 h-4" />
-                            </button>
-                            <button type="button" wire:click="eliminarDescuento({{ $descuento->id }})" wire:confirm="¿Eliminar este descuento?" class="text-gray-400 hover:text-red-500">
-                                <x-heroicon-o-trash class="w-4 h-4" />
-                            </button>
+                            @unless (auth()->user()->solo_lectura)
+                                <button type="button" wire:click="editarDescuento({{ $descuento->id }})" class="text-gray-400 hover:text-brand-600">
+                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                </button>
+                                <button type="button" wire:click="eliminarDescuento({{ $descuento->id }})" wire:confirm="¿Eliminar este descuento?" class="text-gray-400 hover:text-red-500">
+                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                </button>
+                            @endunless
                         </div>
                     </div>
                 @endforeach
@@ -43,10 +48,12 @@
         <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-sm font-semibold text-gray-900">Transportadoras</h2>
-                <button type="button" wire:click="nuevaTransportadora" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 text-white text-xs font-medium hover:bg-brand-700 transition-colors">
-                    <x-heroicon-o-plus class="w-4 h-4" />
-                    Nueva
-                </button>
+                @unless (auth()->user()->solo_lectura)
+                    <button type="button" wire:click="nuevaTransportadora" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 text-white text-xs font-medium hover:bg-brand-700 transition-colors">
+                        <x-heroicon-o-plus class="w-4 h-4" />
+                        Nueva
+                    </button>
+                @endunless
             </div>
 
             <div class="space-y-2">
@@ -57,19 +64,22 @@
                             <p class="text-xs text-gray-400">${{ number_format($transportadora->costo, 0, ',', '.') }}</p>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button type="button" wire:click="toggleTransportadora({{ $transportadora->id }})" @class([
+                            <button type="button" wire:click="toggleTransportadora({{ $transportadora->id }})" @disabled(auth()->user()->solo_lectura) @class([
                                 'relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0',
                                 'bg-brand-600' => $transportadora->activo,
                                 'bg-gray-200' => ! $transportadora->activo,
+                                'opacity-50 cursor-not-allowed' => auth()->user()->solo_lectura,
                             ])>
                                 <span @class(['inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform', 'translate-x-4' => $transportadora->activo, 'translate-x-1' => ! $transportadora->activo])></span>
                             </button>
-                            <button type="button" wire:click="editarTransportadora({{ $transportadora->id }})" class="text-gray-400 hover:text-brand-600">
-                                <x-heroicon-o-pencil-square class="w-4 h-4" />
-                            </button>
-                            <button type="button" wire:click="eliminarTransportadora({{ $transportadora->id }})" wire:confirm="¿Eliminar esta transportadora?" class="text-gray-400 hover:text-red-500">
-                                <x-heroicon-o-trash class="w-4 h-4" />
-                            </button>
+                            @unless (auth()->user()->solo_lectura)
+                                <button type="button" wire:click="editarTransportadora({{ $transportadora->id }})" class="text-gray-400 hover:text-brand-600">
+                                    <x-heroicon-o-pencil-square class="w-4 h-4" />
+                                </button>
+                                <button type="button" wire:click="eliminarTransportadora({{ $transportadora->id }})" wire:confirm="¿Eliminar esta transportadora?" class="text-gray-400 hover:text-red-500">
+                                    <x-heroicon-o-trash class="w-4 h-4" />
+                                </button>
+                            @endunless
                         </div>
                     </div>
                 @endforeach
