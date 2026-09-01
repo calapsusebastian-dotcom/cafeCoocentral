@@ -23,6 +23,7 @@ class Modulos
             'clientes.index' => ['label' => 'Clientes', 'icon' => 'users'],
             'productos.index' => ['label' => 'Productos', 'icon' => 'cube'],
             'inventario.index' => ['label' => 'Inventario', 'icon' => 'archive-box'],
+            'produccion.index' => ['label' => 'Producción', 'icon' => 'fire'],
             'pedidos-bodega.index' => ['label' => 'Pedidos a Bodega', 'icon' => 'building-storefront'],
             'bodegas.index' => ['label' => 'Bodegas', 'icon' => 'building-office-2'],
             'rutas.index' => ['label' => 'Rutas', 'icon' => 'map'],

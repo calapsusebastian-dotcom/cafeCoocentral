@@ -6,22 +6,26 @@ use App\Livewire\Clientes;
 use App\Livewire\Descuentos;
 use App\Livewire\EditarPedido;
 use App\Livewire\EditarPedidoBodega;
+use App\Livewire\EditarProduccion;
 use App\Livewire\EditarRuta;
 use App\Livewire\Facturacion;
 use App\Livewire\Inventario;
 use App\Livewire\Notificaciones;
+use App\Livewire\NuevaProduccion;
 use App\Livewire\NuevaRuta;
 use App\Livewire\NuevoPedido;
 use App\Livewire\NuevoPedidoBodega;
 use App\Livewire\Pedidos;
 use App\Livewire\PedidosBodega;
 use App\Livewire\PedidosWeb;
+use App\Livewire\Produccion;
 use App\Livewire\Productos;
 use App\Livewire\Reportes;
 use App\Livewire\Rutas;
 use App\Livewire\Usuarios;
 use App\Models\Pedido;
 use App\Models\PedidoBodega;
+use App\Models\Produccion as ProduccionModel;
 use App\Models\Ruta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -97,6 +101,17 @@ Route::middleware('auth')->group(function () {
 
             return view('rutas.imprimir', ['ruta' => $ruta, 'porProducto' => $porProducto]);
         })->name('rutas.imprimir');
+    });
+
+    Route::middleware('modulo:produccion.index')->group(function () {
+        Route::livewire('/produccion', Produccion\Index::class)->name('produccion.index');
+        Route::livewire('/produccion/nueva', NuevaProduccion::class)->name('produccion.nueva');
+        Route::livewire('/produccion/{produccion}/editar', EditarProduccion::class)->name('produccion.editar');
+        Route::get('/produccion/{produccion}/imprimir', function (ProduccionModel $produccion) {
+            $produccion->load(['items', 'usuario']);
+
+            return view('produccion.imprimir', ['produccion' => $produccion]);
+        })->name('produccion.imprimir');
     });
 
     Route::livewire('/reportes', Reportes\Index::class)->name('reportes.index')->middleware('modulo:reportes.index');
