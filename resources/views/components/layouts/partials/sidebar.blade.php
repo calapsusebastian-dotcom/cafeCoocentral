@@ -9,18 +9,38 @@
     $initials = collect(explode(' ', $vendor->name))->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('');
 @endphp
 
-<aside class="hidden lg:flex w-72 shrink-0 flex-col bg-white border-r border-gray-100 h-screen sticky top-0">
+{{-- Fondo oscuro detrás del panel en móvil/tablet --}}
+<div
+    x-show="sidebarOpen"
+    x-cloak
+    @click="sidebarOpen = false"
+    class="fixed inset-0 z-40 bg-gray-900/50 lg:hidden"
+    x-transition:enter="transition-opacity ease-linear duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition-opacity ease-linear duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+></div>
+
+<aside
+    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+    class="fixed inset-y-0 left-0 z-50 w-72 shrink-0 flex flex-col bg-white border-r border-gray-100 h-screen transition-transform duration-200 ease-in-out lg:sticky lg:top-0"
+>
     <div class="px-6 pt-6 pb-5 flex items-center gap-3">
         <span class="flex items-center justify-center w-10 h-10 rounded-2xl bg-brand-50 text-brand-600">
             <x-icon.coffee-bean class="w-6 h-6" />
         </span>
-        <div>
-            <p class="font-semibold text-gray-900 leading-tight">Café Coocentral</p>
-            <p class="text-xs text-gray-400 leading-tight">Pasión que sabe a origen</p>
+        <div class="min-w-0">
+            <p class="font-semibold text-gray-900 leading-tight truncate">Café Coocentral</p>
+            <p class="text-xs text-gray-400 leading-tight truncate">Pasión que sabe a origen</p>
         </div>
+        <button type="button" @click="sidebarOpen = false" class="ml-auto lg:hidden text-gray-400 hover:text-gray-600 shrink-0">
+            <x-heroicon-o-x-mark class="w-5 h-5" />
+        </button>
     </div>
 
-    <nav class="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+    <nav class="flex-1 px-4 py-2 space-y-1 overflow-y-auto" @click="sidebarOpen = false">
         @foreach ($navItems as $item)
             @php $active = request()->routeIs($item['route']); @endphp
             <a

@@ -1,7 +1,10 @@
 @props(['title', 'subtitle' => '', 'icon' => 'shopping-cart'])
 
-<header class="flex items-center justify-between gap-4 px-6 lg:px-10 py-6 border-b border-gray-100 bg-white/70 backdrop-blur sticky top-0 z-10">
+<header class="flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-10 py-6 border-b border-gray-100 bg-white/70 backdrop-blur sticky top-0 z-10">
     <div class="flex items-center gap-3 min-w-0">
+        <button type="button" @click="sidebarOpen = true" class="lg:hidden shrink-0 flex items-center justify-center w-10 h-10 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
+            <x-heroicon-o-bars-3 class="w-6 h-6" />
+        </button>
         <span class="hidden sm:flex items-center justify-center w-11 h-11 rounded-2xl bg-brand-50 text-brand-600 shrink-0">
             <x-dynamic-component :component="'heroicon-o-' . $icon" class="w-6 h-6" />
         </span>

@@ -15,7 +15,7 @@
     @livewireStyles
 </head>
 <body class="antialiased bg-gray-50 text-gray-900">
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen" x-data="{ sidebarOpen: false }">
         <x-layouts.partials.sidebar :vendor="$vendor" />
 
         <div class="flex-1 min-w-0 flex flex-col">
@@ -23,7 +23,7 @@
                 {{ $headerActions ?? '' }}
             </x-layouts.partials.topbar>
 
-            <main class="flex-1 px-6 lg:px-10 py-8">
+            <main class="flex-1 px-4 sm:px-6 lg:px-10 py-8">
                 {{ $slot }}
             </main>
         </div>
