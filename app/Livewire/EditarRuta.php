@@ -42,7 +42,7 @@ class EditarRuta extends Component
 
     public array $clientesSeleccionados = [];
 
-    public ?int $productosModalClienteId = null;
+    public ?string $productosModalParadaKey = null;
 
     public string $modalProductoQuery = '';
 
@@ -73,21 +73,23 @@ class EditarRuta extends Component
         $this->notas = $ruta->notas ?? '';
 
         foreach ($ruta->clientes as $rutaCliente) {
-            $clienteKey = (string) $rutaCliente->cliente_id;
+            $paradaKey = (string) Str::uuid();
 
-            $this->clientes[$clienteKey] = [
+            $this->clientes[$paradaKey] = [
+                'ruta_cliente_id' => $rutaCliente->id,
                 'cliente_id' => $rutaCliente->cliente_id,
                 'nombre' => $rutaCliente->cliente->nombre,
                 'documento' => $rutaCliente->cliente->documento,
                 'medio_pago' => $rutaCliente->medio_pago ?? 'pendiente',
                 'numero_orden' => $rutaCliente->numero_orden ?? '',
+                'observaciones' => $rutaCliente->observaciones ?? '',
                 'productos' => [],
             ];
 
             foreach ($rutaCliente->productos as $producto) {
                 $lineKey = (string) Str::uuid();
 
-                $this->clientes[$clienteKey]['productos'][$lineKey] = [
+                $this->clientes[$paradaKey]['productos'][$lineKey] = [
                     'producto_id' => $producto->producto_id,
                     'nombre' => $producto->producto_nombre,
                     'codigo' => $producto->producto_codigo,
@@ -98,8 +100,8 @@ class EditarRuta extends Component
                 ];
             }
 
-            if (! empty($this->clientes[$clienteKey]['productos'])) {
-                $this->clientesColapsados[$clienteKey] = true;
+            if (! empty($this->clientes[$paradaKey]['productos'])) {
+                $this->clientesColapsados[$paradaKey] = true;
             }
         }
     }
@@ -166,58 +168,61 @@ class EditarRuta extends Component
 
     public function confirmarClientesSeleccionados(): void
     {
-        $clientes = Cliente::whereIn('id', $this->clientesSeleccionados)->get();
+        $clientes = Cliente::whereIn('id', $this->clientesSeleccionados)->get()->keyBy('id');
 
-        foreach ($clientes as $cliente) {
-            $key = (string) $cliente->id;
+        foreach ($this->clientesSeleccionados as $clienteId) {
+            $cliente = $clientes->get($clienteId);
 
-            if (! isset($this->clientes[$key])) {
-                $this->clientes[$key] = [
-                    'cliente_id' => $cliente->id,
-                    'nombre' => $cliente->nombre,
-                    'documento' => $cliente->documento,
-                    'medio_pago' => 'pendiente',
-                    'numero_orden' => '',
-                    'productos' => [],
-                ];
+            if (! $cliente) {
+                continue;
             }
+
+            // Cada selección crea una parada nueva: un mismo cliente puede
+            // aparecer varias veces en la ruta (p.ej. dos entregas distintas).
+            $this->clientes[(string) Str::uuid()] = [
+                'cliente_id' => $cliente->id,
+                'nombre' => $cliente->nombre,
+                'documento' => $cliente->documento,
+                'medio_pago' => 'pendiente',
+                'numero_orden' => '',
+                'observaciones' => '',
+                'productos' => [],
+            ];
         }
 
         $this->showClientesModal = false;
         $this->clientesSeleccionados = [];
     }
 
-    public function quitarCliente(int $clienteId): void
+    public function quitarCliente(string $paradaKey): void
     {
-        unset($this->clientes[(string) $clienteId]);
-        unset($this->clientesColapsados[(string) $clienteId]);
+        unset($this->clientes[$paradaKey]);
+        unset($this->clientesColapsados[$paradaKey]);
     }
 
-    public function actualizarMedioPago(int $clienteId, string $valor): void
+    public function actualizarMedioPago(string $paradaKey, string $valor): void
     {
-        $clienteKey = (string) $clienteId;
-
-        if (! isset($this->clientes[$clienteKey])) {
+        if (! isset($this->clientes[$paradaKey])) {
             return;
         }
 
-        $this->clientes[$clienteKey]['medio_pago'] = $valor;
+        $this->clientes[$paradaKey]['medio_pago'] = $valor;
     }
 
-    public function moverClienteArriba(int $clienteId): void
+    public function moverClienteArriba(string $paradaKey): void
     {
-        $this->moverCliente($clienteId, -1);
+        $this->moverCliente($paradaKey, -1);
     }
 
-    public function moverClienteAbajo(int $clienteId): void
+    public function moverClienteAbajo(string $paradaKey): void
     {
-        $this->moverCliente($clienteId, 1);
+        $this->moverCliente($paradaKey, 1);
     }
 
-    private function moverCliente(int $clienteId, int $direccion): void
+    private function moverCliente(string $paradaKey, int $direccion): void
     {
         $keys = array_keys($this->clientes);
-        $index = array_search($clienteId, $keys, true);
+        $index = array_search($paradaKey, $keys, true);
         $nuevoIndex = $index + $direccion;
 
         if ($index === false || $nuevoIndex < 0 || $nuevoIndex >= count($keys)) {
@@ -230,7 +235,7 @@ class EditarRuta extends Component
     }
 
     /**
-     * Recibe el orden final de IDs de cliente tras un arrastrar-y-soltar (el
+     * Recibe el orden final de claves de parada tras un arrastrar-y-soltar (el
      * navegador ya reubicó las tarjetas al soltar; esto solo persiste ese
      * orden en el servidor).
      */
@@ -253,10 +258,9 @@ class EditarRuta extends Component
         $this->clientes = $nuevo;
     }
 
-    public function toggleClienteAbierto(int $clienteId): void
+    public function toggleClienteAbierto(string $paradaKey): void
     {
-        $key = (string) $clienteId;
-        $this->clientesColapsados[$key] = ! ($this->clientesColapsados[$key] ?? false);
+        $this->clientesColapsados[$paradaKey] = ! ($this->clientesColapsados[$paradaKey] ?? false);
     }
 
     public function expandirTodo(): void
@@ -271,16 +275,16 @@ class EditarRuta extends Component
         }
     }
 
-    public function abrirModalProductos(int $clienteId): void
+    public function abrirModalProductos(string $paradaKey): void
     {
-        $this->productosModalClienteId = $clienteId;
+        $this->productosModalParadaKey = $paradaKey;
         $this->productosSeleccionados = [];
         $this->modalProductoQuery = '';
     }
 
     public function cerrarModalProductos(): void
     {
-        $this->productosModalClienteId = null;
+        $this->productosModalParadaKey = null;
     }
 
     public function toggleProductoSeleccionado(int $productoId): void
@@ -294,9 +298,9 @@ class EditarRuta extends Component
 
     public function confirmarProductosSeleccionados(): void
     {
-        $clienteKey = (string) $this->productosModalClienteId;
+        $paradaKey = $this->productosModalParadaKey;
 
-        if (! isset($this->clientes[$clienteKey])) {
+        if ($paradaKey === null || ! isset($this->clientes[$paradaKey])) {
             return;
         }
 
@@ -305,14 +309,14 @@ class EditarRuta extends Component
         foreach ($productos as $producto) {
             // Reuse the existing "en grano" line for this product if there's one, so
             // selecting it again just bumps its quantity; otherwise start a new line.
-            $lineKey = collect($this->clientes[$clienteKey]['productos'])->search(
+            $lineKey = collect($this->clientes[$paradaKey]['productos'])->search(
                 fn ($linea) => $linea['producto_id'] === $producto->id && $linea['molienda'] === 'entero'
             );
 
             if ($lineKey !== false) {
-                $this->clientes[$clienteKey]['productos'][$lineKey]['cantidad']++;
+                $this->clientes[$paradaKey]['productos'][$lineKey]['cantidad']++;
             } else {
-                $this->clientes[$clienteKey]['productos'][(string) Str::uuid()] = [
+                $this->clientes[$paradaKey]['productos'][(string) Str::uuid()] = [
                     'producto_id' => $producto->id,
                     'nombre' => $producto->nombre,
                     'codigo' => $producto->sku,
@@ -324,31 +328,27 @@ class EditarRuta extends Component
             }
         }
 
-        $this->productosModalClienteId = null;
+        $this->productosModalParadaKey = null;
         $this->productosSeleccionados = [];
     }
 
-    public function incrementarProducto(int $clienteId, string $key): void
+    public function incrementarProducto(string $paradaKey, string $productoKey): void
     {
-        $clienteKey = (string) $clienteId;
-
-        if (! isset($this->clientes[$clienteKey]['productos'][$key])) {
+        if (! isset($this->clientes[$paradaKey]['productos'][$productoKey])) {
             return;
         }
 
-        $this->clientes[$clienteKey]['productos'][$key]['cantidad']++;
+        $this->clientes[$paradaKey]['productos'][$productoKey]['cantidad']++;
     }
 
-    public function decrementarProducto(int $clienteId, string $key): void
+    public function decrementarProducto(string $paradaKey, string $productoKey): void
     {
-        $clienteKey = (string) $clienteId;
-
-        if (! isset($this->clientes[$clienteKey]['productos'][$key])) {
+        if (! isset($this->clientes[$paradaKey]['productos'][$productoKey])) {
             return;
         }
 
-        $cantidad = $this->clientes[$clienteKey]['productos'][$key]['cantidad'] - 1;
-        $this->clientes[$clienteKey]['productos'][$key]['cantidad'] = max(1, $cantidad);
+        $cantidad = $this->clientes[$paradaKey]['productos'][$productoKey]['cantidad'] - 1;
+        $this->clientes[$paradaKey]['productos'][$productoKey]['cantidad'] = max(1, $cantidad);
     }
 
     /**
@@ -372,13 +372,13 @@ class EditarRuta extends Component
                 return;
             }
 
-            [$clienteKey, , $lineKey] = $segments;
+            [$paradaKey, , $productoKey] = $segments;
 
-            if (! isset($this->clientes[$clienteKey]['productos'][$lineKey])) {
+            if (! isset($this->clientes[$paradaKey]['productos'][$productoKey])) {
                 return;
             }
 
-            $this->clientes[$clienteKey]['productos'][$lineKey][$campo] = $campo === 'cantidad'
+            $this->clientes[$paradaKey]['productos'][$productoKey][$campo] = $campo === 'cantidad'
                 ? max(1, (int) $value)
                 : max(0, (float) $value);
 
@@ -386,20 +386,18 @@ class EditarRuta extends Component
         }
     }
 
-    public function actualizarMoliendaProducto(int $clienteId, string $key, string $valor): void
+    public function actualizarMoliendaProducto(string $paradaKey, string $productoKey, string $valor): void
     {
-        $clienteKey = (string) $clienteId;
-
-        if (! isset($this->clientes[$clienteKey]['productos'][$key])) {
+        if (! isset($this->clientes[$paradaKey]['productos'][$productoKey])) {
             return;
         }
 
-        $this->clientes[$clienteKey]['productos'][$key]['molienda'] = $valor;
+        $this->clientes[$paradaKey]['productos'][$productoKey]['molienda'] = $valor;
     }
 
-    public function quitarProducto(int $clienteId, string $key): void
+    public function quitarProducto(string $paradaKey, string $productoKey): void
     {
-        unset($this->clientes[(string) $clienteId]['productos'][$key]);
+        unset($this->clientes[$paradaKey]['productos'][$productoKey]);
     }
 
     public function guardarRuta()
@@ -429,13 +427,18 @@ class EditarRuta extends Component
         }
 
         DB::transaction(function () {
-            $facturasPrevias = $this->ruta->clientes()->get(['cliente_id', 'numero_factura', 'facturado_at'])
-                ->keyBy('cliente_id');
+            // Se asocia por el id de la parada original (no por cliente_id) porque
+            // una ruta puede tener varias paradas del mismo cliente, cada una con su
+            // propio estado de facturación.
+            $facturasPrevias = $this->ruta->clientes()->get(['id', 'numero_factura', 'facturado_at'])
+                ->keyBy('id');
 
             $this->ruta->clientes()->delete();
 
             foreach (array_values($this->clientes) as $orden => $cliente) {
-                $facturaPrevia = $facturasPrevias->get($cliente['cliente_id']);
+                $facturaPrevia = isset($cliente['ruta_cliente_id'])
+                    ? $facturasPrevias->get($cliente['ruta_cliente_id'])
+                    : null;
 
                 $rutaCliente = RutaCliente::create([
                     'ruta_id' => $this->ruta->id,
@@ -443,6 +446,7 @@ class EditarRuta extends Component
                     'orden' => $orden,
                     'medio_pago' => $cliente['medio_pago'] ?? 'pendiente',
                     'numero_orden' => $cliente['numero_orden'] ?: null,
+                    'observaciones' => $cliente['observaciones'] ?: null,
                     'numero_factura' => $facturaPrevia?->numero_factura,
                     'facturado_at' => $facturaPrevia?->facturado_at,
                 ]);

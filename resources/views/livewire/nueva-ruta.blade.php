@@ -77,7 +77,7 @@
                             },
                             soltar() {
                                 if (this.dragId !== null && this.dragEl) {
-                                    const orden = Array.from(this.dragEl.parentNode.querySelectorAll('[data-cliente-card]')).map(el => parseInt(el.dataset.clienteCard, 10));
+                                    const orden = Array.from(this.dragEl.parentNode.querySelectorAll('[data-cliente-card]')).map(el => el.dataset.clienteCard);
                                     $wire.reordenarTodos(orden);
                                 }
                                 this.dragId = null;
@@ -88,22 +88,22 @@
                         x-on:pointerup.window="soltar()"
                         x-on:pointercancel.window="dragId = null; dragEl = null"
                     >
-                        @foreach ($clientes as $clienteId => $cliente)
+                        @foreach ($clientes as $paradaKey => $cliente)
                             @php
                                 $numProductos = count($cliente['productos']);
                                 $subtotalCliente = collect($cliente['productos'])->sum(fn ($p) => $p['precio_unitario'] * $p['cantidad']);
-                                $abierto = ! ($clientesColapsados[$clienteId] ?? false);
+                                $abierto = ! ($clientesColapsados[$paradaKey] ?? false);
                             @endphp
                             <div
-                                data-cliente-card="{{ $clienteId }}"
+                                data-cliente-card="{{ $paradaKey }}"
                                 class="rounded-xl border border-gray-100 overflow-hidden transition-all bg-white"
-                                :class="{ 'opacity-60 shadow-lg': dragId === {{ $clienteId }} }"
-                                wire:key="ruta-cliente-{{ $clienteId }}"
+                                :class="{ 'opacity-60 shadow-lg': dragId === '{{ $paradaKey }}' }"
+                                wire:key="ruta-cliente-{{ $paradaKey }}"
                             >
-                                <div class="flex items-center justify-between gap-2 p-4 cursor-pointer hover:bg-gray-50 transition-colors" wire:click="toggleClienteAbierto({{ $clienteId }})">
+                                <div class="flex items-center justify-between gap-2 p-4 cursor-pointer hover:bg-gray-50 transition-colors" wire:click="toggleClienteAbierto('{{ $paradaKey }}')">
                                     <div class="flex items-center gap-3 min-w-0">
                                         <span
-                                            x-on:pointerdown="iniciarArrastre({{ $clienteId }}, $event)"
+                                            x-on:pointerdown="iniciarArrastre('{{ $paradaKey }}', $event)"
                                             x-on:click.stop
                                             title="Arrastrar para reordenar"
                                             class="cursor-grab active:cursor-grabbing text-gray-300 hover:text-gray-500 shrink-0 touch-none"
@@ -120,14 +120,14 @@
                                         <span class="text-xs text-gray-400 hidden sm:inline">{{ $numProductos }} {{ Str::plural('producto', $numProductos) }}</span>
                                         <span class="text-xs font-medium text-gray-700">${{ number_format($subtotalCliente, 0, ',', '.') }}</span>
                                         <div class="flex items-center">
-                                            <button type="button" wire:click.stop="moverClienteArriba({{ $clienteId }})" @disabled($loop->first) title="Subir cliente" class="text-gray-300 hover:text-brand-600 disabled:opacity-30 disabled:hover:text-gray-300 transition-colors">
+                                            <button type="button" wire:click.stop="moverClienteArriba('{{ $paradaKey }}')" @disabled($loop->first) title="Subir cliente" class="text-gray-300 hover:text-brand-600 disabled:opacity-30 disabled:hover:text-gray-300 transition-colors">
                                                 <x-heroicon-o-chevron-up class="w-4 h-4" />
                                             </button>
-                                            <button type="button" wire:click.stop="moverClienteAbajo({{ $clienteId }})" @disabled($loop->last) title="Bajar cliente" class="text-gray-300 hover:text-brand-600 disabled:opacity-30 disabled:hover:text-gray-300 transition-colors">
+                                            <button type="button" wire:click.stop="moverClienteAbajo('{{ $paradaKey }}')" @disabled($loop->last) title="Bajar cliente" class="text-gray-300 hover:text-brand-600 disabled:opacity-30 disabled:hover:text-gray-300 transition-colors">
                                                 <x-heroicon-o-chevron-down class="w-4 h-4" />
                                             </button>
                                         </div>
-                                        <button type="button" wire:click.stop="quitarCliente({{ $clienteId }})" class="text-gray-300 hover:text-red-500 transition-colors">
+                                        <button type="button" wire:click.stop="quitarCliente('{{ $paradaKey }}')" class="text-gray-300 hover:text-red-500 transition-colors">
                                             <x-heroicon-o-x-mark class="w-4 h-4" />
                                         </button>
                                     </div>
@@ -135,7 +135,7 @@
 
                                 <div class="px-4 pb-3 flex items-center gap-2">
                                     <span class="text-xs text-gray-400 shrink-0">Medio de pago</span>
-                                    <select wire:change="actualizarMedioPago({{ $clienteId }}, $event.target.value)" class="rounded-lg border border-gray-200 text-xs px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200">
+                                    <select wire:change="actualizarMedioPago('{{ $paradaKey }}', $event.target.value)" class="rounded-lg border border-gray-200 text-xs px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200">
                                         <option value="pendiente" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'pendiente')>⏳ Pendiente</option>
                                         <option value="efectivo" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'efectivo')>💵 Efectivo</option>
                                         <option value="transferencia" @selected(($cliente['medio_pago'] ?? 'pendiente') === 'transferencia')>🏦 Transferencia</option>
@@ -147,9 +147,18 @@
                                     <span class="text-xs text-gray-400 shrink-0">N.° de orden</span>
                                     <input
                                         type="text"
-                                        wire:model.live.debounce.500ms="clientes.{{ $clienteId }}.numero_orden"
+                                        wire:model.live.debounce.500ms="clientes.{{ $paradaKey }}.numero_orden"
                                         placeholder="Opcional"
                                         class="w-28 rounded-lg border border-gray-200 text-xs px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200"
+                                    />
+                                </div>
+
+                                <div class="px-4 pb-3">
+                                    <input
+                                        type="text"
+                                        wire:model.live.debounce.500ms="clientes.{{ $paradaKey }}.observaciones"
+                                        placeholder="Observación (opcional)"
+                                        class="w-full rounded-lg border border-gray-200 text-xs px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200"
                                     />
                                 </div>
 
@@ -160,18 +169,18 @@
                                 @else
                                     <div class="space-y-2 mb-3">
                                         @foreach ($cliente['productos'] as $lineKey => $producto)
-                                            <div class="bg-gray-50 rounded-lg px-3 py-2.5" wire:key="ruta-cliente-{{ $clienteId }}-producto-{{ $lineKey }}">
+                                            <div class="bg-gray-50 rounded-lg px-3 py-2.5" wire:key="ruta-cliente-{{ $paradaKey }}-producto-{{ $lineKey }}">
                                                 <div class="flex items-center justify-between gap-2 mb-2">
                                                     <div class="min-w-0">
                                                         <p class="font-medium text-gray-800 truncate text-xs">{{ $producto['nombre'] }}</p>
                                                         <p class="text-gray-400 text-[11px]">{{ $producto['presentacion'] }}</p>
                                                     </div>
-                                                    <button type="button" wire:click="quitarProducto({{ $clienteId }}, '{{ $lineKey }}')" class="text-gray-300 hover:text-red-500 shrink-0">
+                                                    <button type="button" wire:click="quitarProducto('{{ $paradaKey }}', '{{ $lineKey }}')" class="text-gray-300 hover:text-red-500 shrink-0">
                                                         <x-heroicon-o-trash class="w-3.5 h-3.5" />
                                                     </button>
                                                 </div>
                                                 <div class="flex items-center gap-2">
-                                                    <select wire:change="actualizarMoliendaProducto({{ $clienteId }}, '{{ $lineKey }}', $event.target.value)" class="flex-1 rounded-lg border border-gray-200 text-[11px] px-1.5 py-1.5 bg-white">
+                                                    <select wire:change="actualizarMoliendaProducto('{{ $paradaKey }}', '{{ $lineKey }}', $event.target.value)" class="flex-1 rounded-lg border border-gray-200 text-[11px] px-1.5 py-1.5 bg-white">
                                                         <option value="entero" @selected(($producto['molienda'] ?? 'entero') === 'entero')>En grano</option>
                                                         <option value="fina" @selected(($producto['molienda'] ?? 'entero') === 'fina')>Fina</option>
                                                         <option value="media" @selected(($producto['molienda'] ?? 'entero') === 'media')>Media</option>
@@ -183,19 +192,19 @@
                                                             type="number"
                                                             step="0.01"
                                                             min="0"
-                                                            wire:model.live.debounce.500ms="clientes.{{ $clienteId }}.productos.{{ $lineKey }}.precio_unitario"
+                                                            wire:model.live.debounce.500ms="clientes.{{ $paradaKey }}.productos.{{ $lineKey }}.precio_unitario"
                                                             class="w-full rounded-lg border border-gray-200 text-[11px] pl-4 pr-1.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-brand-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                         />
                                                     </div>
                                                     <div class="inline-flex items-center rounded-lg border border-gray-200 bg-white shrink-0">
-                                                        <button type="button" wire:click="decrementarProducto({{ $clienteId }}, '{{ $lineKey }}')" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-brand-600">−</button>
+                                                        <button type="button" wire:click="decrementarProducto('{{ $paradaKey }}', '{{ $lineKey }}')" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-brand-600">−</button>
                                                         <input
                                                             type="number"
                                                             min="1"
-                                                            wire:model.live.debounce.500ms="clientes.{{ $clienteId }}.productos.{{ $lineKey }}.cantidad"
+                                                            wire:model.live.debounce.500ms="clientes.{{ $paradaKey }}.productos.{{ $lineKey }}.cantidad"
                                                             class="w-9 text-center text-xs border-0 bg-transparent focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                         />
-                                                        <button type="button" wire:click="incrementarProducto({{ $clienteId }}, '{{ $lineKey }}')" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-brand-600">+</button>
+                                                        <button type="button" wire:click="incrementarProducto('{{ $paradaKey }}', '{{ $lineKey }}')" class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-brand-600">+</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -207,7 +216,7 @@
                                 @endif
 
                                 <div class="px-4 pb-4 {{ $abierto ? '' : 'pt-3' }}">
-                                    <button type="button" wire:click="abrirModalProductos({{ $clienteId }})" class="flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700">
+                                    <button type="button" wire:click="abrirModalProductos('{{ $paradaKey }}')" class="flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:text-brand-700">
                                         <x-heroicon-o-plus class="w-3.5 h-3.5" />
                                         Agregar productos
                                     </button>
@@ -269,20 +278,22 @@
 
                 <div class="flex-1 overflow-y-auto -mx-2 px-2 space-y-1">
                     @forelse ($this->clientesModalResultados as $cliente)
+                        @php
+                            $vecesEnRuta = collect($clientes)->where('cliente_id', $cliente->id)->count();
+                        @endphp
                         <label class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 cursor-pointer">
                             <input
                                 type="checkbox"
                                 wire:click="toggleClienteSeleccionado({{ $cliente->id }})"
                                 @checked(in_array($cliente->id, $clientesSeleccionados))
-                                @disabled(isset($clientes[$cliente->id]))
                                 class="w-4 h-4 rounded border-gray-300 text-brand-600 focus:ring-brand-200 disabled:opacity-40"
                             />
                             <span class="min-w-0 flex-1">
                                 <span class="block text-sm font-medium text-gray-800 truncate">{{ $cliente->nombre }}</span>
                                 <span class="block text-xs text-gray-400 truncate">{{ $cliente->documento }} · {{ $cliente->ciudad }}</span>
                             </span>
-                            @if (isset($clientes[$cliente->id]))
-                                <span class="text-[11px] text-emerald-600 font-medium shrink-0">Agregado</span>
+                            @if ($vecesEnRuta > 0)
+                                <span class="text-[11px] text-emerald-600 font-medium shrink-0">Agregado{{ $vecesEnRuta > 1 ? " x{$vecesEnRuta}" : '' }}</span>
                             @endif
                         </label>
                     @empty
@@ -301,7 +312,7 @@
     @endif
 
     {{-- Selector de productos --}}
-    @if ($productosModalClienteId)
+    @if ($productosModalParadaKey)
         <div class="fixed inset-0 z-40 flex items-center justify-center bg-gray-900/40 px-4" wire:click.self="cerrarModalProductos">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 max-h-[80vh] flex flex-col">
                 <div class="flex items-center justify-between mb-4">

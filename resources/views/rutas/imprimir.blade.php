@@ -124,6 +124,9 @@
                                     <span class="text-xs font-medium text-emerald-700">Factura #{{ $rutaCliente->numero_factura }}</span>
                                 @endif
                             </div>
+                            @if ($rutaCliente->observaciones)
+                                <p class="text-xs text-amber-700 bg-amber-50 rounded px-2 py-1 mb-1">{{ $rutaCliente->observaciones }}</p>
+                            @endif
                             <table class="w-full text-sm">
                                 <thead>
                                     <tr class="text-left text-xs text-gray-400 border-b border-gray-100">
