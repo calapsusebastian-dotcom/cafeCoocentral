@@ -91,7 +91,7 @@
                         @foreach ($clientes as $paradaKey => $cliente)
                             @php
                                 $numProductos = count($cliente['productos']);
-                                $subtotalCliente = collect($cliente['productos'])->sum(fn ($p) => $p['precio_unitario'] * $p['cantidad']);
+                                $subtotalCliente = collect($cliente['productos'])->sum(fn ($p) => (float) $p['precio_unitario'] * (int) $p['cantidad']);
                                 $abierto = ! ($clientesColapsados[$paradaKey] ?? false);
                             @endphp
                             <div

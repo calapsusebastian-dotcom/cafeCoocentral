@@ -86,14 +86,14 @@ class NuevaRuta extends Component
     #[Computed]
     public function totalUnidades(): int
     {
-        return collect($this->clientes)->sum(fn ($cliente) => collect($cliente['productos'])->sum('cantidad'));
+        return collect($this->clientes)->sum(fn ($cliente) => collect($cliente['productos'])->sum(fn ($p) => (int) $p['cantidad']));
     }
 
     #[Computed]
     public function totalValor(): float
     {
         return collect($this->clientes)->sum(
-            fn ($cliente) => collect($cliente['productos'])->sum(fn ($p) => $p['precio_unitario'] * $p['cantidad'])
+            fn ($cliente) => collect($cliente['productos'])->sum(fn ($p) => (float) $p['precio_unitario'] * (int) $p['cantidad'])
         );
     }
 
@@ -298,17 +298,23 @@ class NuevaRuta extends Component
     }
 
     /**
-     * Fires for any wire:model-bound "clientes.*" update — used here to
-     * clamp a manually typed quantity/precio to valid numbers. Sin esto,
-     * borrar el campo de precio deja un string vacío en el array y el
-     * cálculo de totales (precio_unitario * cantidad) revienta con un
-     * error 500 ("Unsupported operand types: string * int").
+     * Fires for any wire:model-bound "clientes.*" update. Mientras el usuario
+     * escribe, el campo pasa por un instante vacío (p.ej. al borrar el "1"
+     * antes de teclear "3"); antes esto forzaba un mínimo de 1 en ESE
+     * instante y volvía a pintar el input con "1", pisando lo que la persona
+     * estaba por escribir. Ahora, si el valor no es numérico todavía, no se
+     * toca nada (se deja seguir escribiendo); los totales ya castean con
+     * seguridad y el mínimo real se exige al guardar la ruta.
      */
     public function updatedClientes($value, $key): void
     {
         foreach (['cantidad', 'precio_unitario'] as $campo) {
             if (! str_ends_with($key, ".{$campo}")) {
                 continue;
+            }
+
+            if ($value === '' || $value === null || ! is_numeric($value)) {
+                return;
             }
 
             $path = substr($key, 0, -strlen(".{$campo}"));
@@ -325,8 +331,8 @@ class NuevaRuta extends Component
             }
 
             $this->clientes[$paradaKey]['productos'][$productoKey][$campo] = $campo === 'cantidad'
-                ? max(1, (int) $value)
-                : max(0, (float) $value);
+                ? (int) $value
+                : (float) $value;
 
             return;
         }
@@ -402,8 +408,8 @@ class NuevaRuta extends Component
                         'producto_codigo' => $producto['codigo'],
                         'presentacion' => $producto['presentacion'],
                         'molienda' => $producto['molienda'],
-                        'precio_unitario' => $producto['precio_unitario'],
-                        'cantidad' => $producto['cantidad'],
+                        'precio_unitario' => max(0, (float) $producto['precio_unitario']),
+                        'cantidad' => max(1, (int) $producto['cantidad']),
                     ]);
                 }
             }
