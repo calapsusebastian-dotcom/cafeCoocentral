@@ -307,25 +307,19 @@ class EditarRuta extends Component
         $productos = Producto::whereIn('id', $this->productosSeleccionados)->get();
 
         foreach ($productos as $producto) {
-            // Reuse the existing "en grano" line for this product if there's one, so
-            // selecting it again just bumps its quantity; otherwise start a new line.
-            $lineKey = collect($this->clientes[$paradaKey]['productos'])->search(
-                fn ($linea) => $linea['producto_id'] === $producto->id && $linea['molienda'] === 'entero'
-            );
-
-            if ($lineKey !== false) {
-                $this->clientes[$paradaKey]['productos'][$lineKey]['cantidad']++;
-            } else {
-                $this->clientes[$paradaKey]['productos'][(string) Str::uuid()] = [
-                    'producto_id' => $producto->id,
-                    'nombre' => $producto->nombre,
-                    'codigo' => $producto->sku,
-                    'presentacion' => $producto->presentacion,
-                    'molienda' => 'entero',
-                    'precio_unitario' => (float) $producto->precio,
-                    'cantidad' => 1,
-                ];
-            }
+            // Cada selección crea una línea nueva: un mismo producto puede
+            // aparecer varias veces en el pedido de un cliente (p.ej. distinta
+            // molienda o precio por línea), igual que un cliente puede tener
+            // varias paradas en la misma ruta.
+            $this->clientes[$paradaKey]['productos'][(string) Str::uuid()] = [
+                'producto_id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'codigo' => $producto->sku,
+                'presentacion' => $producto->presentacion,
+                'molienda' => 'entero',
+                'precio_unitario' => (float) $producto->precio,
+                'cantidad' => 1,
+            ];
         }
 
         $this->productosModalParadaKey = null;
