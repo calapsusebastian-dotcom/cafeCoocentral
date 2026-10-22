@@ -14,6 +14,12 @@
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
     # Redirect Trailing Slashes If Not A Folder...
+    # Solo para GET: si esto corre tambien en POST, un 301 hace que el
+    # navegador reenvie la peticion como GET (asi funciona HTTP), y eso
+    # tumba cualquier POST a una ruta que solo acepta POST (p.ej. el
+    # endpoint interno de Livewire) con un 405 que ni siquiera llega a
+    # loggearse en Laravel.
+    RewriteCond %{REQUEST_METHOD} =GET
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
