@@ -8,8 +8,6 @@ class Modulos
      * Canonical list of assignable modules, keyed by the route name that
      * represents each one. Shared by the sidebar, the Usuarios permission
      * editor, and the route-level access middleware so they never drift.
-     * Notificaciones is intentionally not listed here — every logged-in
-     * user can see it regardless of role.
      *
      * @return array<string, array{label: string, icon: string}>
      */

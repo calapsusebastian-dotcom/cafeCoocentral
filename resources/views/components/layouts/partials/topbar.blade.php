@@ -24,6 +24,5 @@
 
         {{ $slot ?? '' }}
 
-        <livewire:notification-bell />
     </div>
 </header>

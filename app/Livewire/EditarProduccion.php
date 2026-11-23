@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
-use App\Models\Notificacion;
 use App\Models\Produccion;
 use App\Models\ProduccionItem;
 use App\Models\Producto;
@@ -197,12 +196,6 @@ class EditarProduccion extends Component
                 'notas' => $this->notas,
             ]);
 
-            Notificacion::create([
-                'user_id' => Auth::id(),
-                'titulo' => 'Producción actualizada',
-                'mensaje' => "Se actualizó la producción #{$this->numero}.",
-                'tipo' => 'sistema',
-            ]);
         });
 
         session()->flash('success', "Producción #{$this->numero} actualizada correctamente.");

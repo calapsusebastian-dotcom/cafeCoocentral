@@ -4,7 +4,6 @@ namespace App\Livewire\Pedidos;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
-use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
@@ -124,13 +123,6 @@ class Index extends Component
             'despachado_at' => $pedido->despachado_at ?? now(),
         ]);
 
-        Notificacion::create([
-            'user_id' => Auth::id(),
-            'titulo' => 'Pedido despachado',
-            'mensaje' => "El pedido #{$pedido->numero} de {$pedido->cliente->nombre} fue despachado con guía {$this->numero_guia}.",
-            'tipo' => 'pedido',
-        ]);
-
         $this->cerrarDespacho();
 
         session()->flash('success', "Pedido #{$pedido->numero} marcado como despachado.");
@@ -164,13 +156,6 @@ class Index extends Component
         $pedido->update([
             'numero_factura' => $this->numero_factura,
             'facturado_at' => $pedido->facturado_at ?? now(),
-        ]);
-
-        Notificacion::create([
-            'user_id' => Auth::id(),
-            'titulo' => 'Pedido facturado',
-            'mensaje' => "El pedido #{$pedido->numero} de {$pedido->cliente->nombre} fue facturado con la factura {$this->numero_factura}.",
-            'tipo' => 'pedido',
         ]);
 
         $this->cerrarFactura();

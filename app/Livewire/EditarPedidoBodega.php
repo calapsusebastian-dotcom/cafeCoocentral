@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Bodega;
-use App\Models\Notificacion;
 use App\Models\PedidoBodega;
 use App\Models\PedidoBodegaItem;
 use App\Models\Producto;
@@ -210,12 +209,6 @@ class EditarPedidoBodega extends Component
                 'notas' => $this->notas,
             ]);
 
-            Notificacion::create([
-                'user_id' => Auth::id(),
-                'titulo' => 'Pedido a bodega actualizado',
-                'mensaje' => "Se actualizó el pedido a bodega #{$this->numero}.",
-                'tipo' => 'sistema',
-            ]);
         });
 
         session()->flash('success', "Pedido a bodega #{$this->numero} actualizado correctamente.");

@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Cliente;
-use App\Models\Notificacion;
 use App\Models\Producto;
 use App\Models\Ruta;
 use App\Models\RutaCliente;
@@ -413,13 +412,6 @@ class NuevaRuta extends Component
                     ]);
                 }
             }
-
-            Notificacion::create([
-                'user_id' => $vendedor->id,
-                'titulo' => 'Ruta creada',
-                'mensaje' => "Se creó la ruta #{$ruta->numero} con ".count($this->clientes).' clientes.',
-                'tipo' => 'sistema',
-            ]);
 
             return $ruta;
         });

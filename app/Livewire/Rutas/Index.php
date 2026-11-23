@@ -3,7 +3,6 @@
 namespace App\Livewire\Rutas;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
-use App\Models\Notificacion;
 use App\Models\Ruta;
 use App\Models\RutaCliente;
 use Illuminate\Support\Facades\Auth;
@@ -110,13 +109,6 @@ class Index extends Component
             'recibida_at' => now(),
         ]);
 
-        Notificacion::create([
-            'user_id' => Auth::id(),
-            'titulo' => 'Ruta recibida',
-            'mensaje' => "La ruta #{$ruta->numero} fue marcada como recibida.",
-            'tipo' => 'sistema',
-        ]);
-
         session()->flash('success', "Ruta #{$ruta->numero} marcada como recibida.");
     }
 
@@ -168,13 +160,6 @@ class Index extends Component
             'despachada_at' => now(),
         ]);
 
-        Notificacion::create([
-            'user_id' => Auth::id(),
-            'titulo' => 'Ruta despachada',
-            'mensaje' => "La ruta #{$ruta->numero} fue despachada con {$this->conductor_nombre} (CC {$this->conductor_cc}).",
-            'tipo' => 'sistema',
-        ]);
-
         $this->cerrarDespacho();
 
         session()->flash('success', "Ruta #{$ruta->numero} marcada como despachada.");
@@ -195,13 +180,6 @@ class Index extends Component
         $ruta->update([
             'status' => 'entregada',
             'entregada_at' => now(),
-        ]);
-
-        Notificacion::create([
-            'user_id' => Auth::id(),
-            'titulo' => 'Ruta entregada',
-            'mensaje' => "La ruta #{$ruta->numero} fue marcada como entregada.",
-            'tipo' => 'sistema',
         ]);
 
         session()->flash('success', "Ruta #{$ruta->numero} marcada como entregada.");
@@ -264,13 +242,6 @@ class Index extends Component
         $rutaCliente->update([
             'numero_factura' => $this->numero_factura,
             'facturado_at' => $rutaCliente->facturado_at ?? now(),
-        ]);
-
-        Notificacion::create([
-            'user_id' => Auth::id(),
-            'titulo' => 'Cliente facturado',
-            'mensaje' => "Se facturó a {$rutaCliente->cliente->nombre} en la ruta #{$rutaCliente->ruta->numero} con la factura {$this->numero_factura}.",
-            'tipo' => 'sistema',
         ]);
 
         $this->cerrarFactura();

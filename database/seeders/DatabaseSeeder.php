@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             BodegaSeeder::class,
             VendorUserSeeder::class,
             PedidoSeeder::class,
-            NotificacionSeeder::class,
         ]);
     }
 }

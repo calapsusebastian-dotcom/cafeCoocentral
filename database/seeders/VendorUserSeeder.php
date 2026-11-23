@@ -24,7 +24,7 @@ class VendorUserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'Vendedor',
             'is_admin' => false,
-            'modulos' => ['pedidos.nuevo', 'pedidos.index', 'pedidos-web.index', 'clientes.index', 'notificaciones.index'],
+            'modulos' => ['pedidos.nuevo', 'pedidos.index', 'pedidos-web.index', 'clientes.index'],
         ]);
 
         User::create([

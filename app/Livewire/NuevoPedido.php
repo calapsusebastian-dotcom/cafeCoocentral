@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Cliente;
 use App\Models\Descuento;
 use App\Models\MovimientoInventario;
-use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\PedidoItem;
 use App\Models\Producto;
@@ -69,7 +68,7 @@ class NuevoPedido extends Component
     public function mount(): void
     {
         if ($this->bloquearSoloLectura()) {
-            $this->redirectRoute('notificaciones.index');
+            $this->redirectRoute('pedidos.index');
 
             return;
         }
@@ -381,13 +380,6 @@ class NuevoPedido extends Component
                     'user_id' => $vendedor->id,
                 ]);
             }
-
-            Notificacion::create([
-                'user_id' => $vendedor->id,
-                'titulo' => 'Nuevo pedido confirmado',
-                'mensaje' => "Se confirmó el pedido #{$pedido->numero} de {$cliente->nombre} por $".number_format($pedido->total, 0, ',', '.'),
-                'tipo' => 'pedido',
-            ]);
 
             return $pedido;
         });

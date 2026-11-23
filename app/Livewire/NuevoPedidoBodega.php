@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Bodega;
-use App\Models\Notificacion;
 use App\Models\PedidoBodega;
 use App\Models\PedidoBodegaItem;
 use App\Models\Producto;
@@ -192,13 +191,6 @@ class NuevoPedidoBodega extends Component
             }
 
             $bodega = Bodega::find($this->bodegaId);
-
-            Notificacion::create([
-                'user_id' => $vendedor->id,
-                'titulo' => 'Pedido a bodega creado',
-                'mensaje' => "Se creó el pedido #{$pedidoBodega->numero} a la bodega {$bodega->nombre} con ".collect($this->cart)->sum('cantidad')." unidades.",
-                'tipo' => 'sistema',
-            ]);
 
             return $pedidoBodega;
         });

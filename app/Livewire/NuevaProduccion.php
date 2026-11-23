@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
-use App\Models\Notificacion;
 use App\Models\Produccion;
 use App\Models\ProduccionItem;
 use App\Models\Producto;
@@ -177,13 +176,6 @@ class NuevaProduccion extends Component
                     'cantidad' => $line['cantidad'],
                 ]);
             }
-
-            Notificacion::create([
-                'user_id' => $usuario->id,
-                'titulo' => 'Producción registrada',
-                'mensaje' => "Se registró la producción #{$produccion->numero} con ".collect($this->cart)->sum('cantidad')." unidades.",
-                'tipo' => 'sistema',
-            ]);
 
             return $produccion;
         });

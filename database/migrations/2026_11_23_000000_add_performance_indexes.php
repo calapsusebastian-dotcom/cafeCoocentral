@@ -8,10 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('notificaciones', function (Blueprint $table) {
-            $table->index('leida', 'notificaciones_leida_index');
-        });
-
         Schema::table('pedidos', function (Blueprint $table) {
             $table->index('created_at', 'pedidos_created_at_index');
             $table->index('status', 'pedidos_status_index');
@@ -25,7 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('notificaciones', fn (Blueprint $t) => $t->dropIndex('notificaciones_leida_index'));
         Schema::table('pedidos', function (Blueprint $t) {
             $t->dropIndex('pedidos_created_at_index');
             $t->dropIndex('pedidos_status_index');

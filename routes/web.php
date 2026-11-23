@@ -10,7 +10,6 @@ use App\Livewire\EditarProduccion;
 use App\Livewire\EditarRuta;
 use App\Livewire\Facturacion;
 use App\Livewire\Inventario;
-use App\Livewire\Notificaciones;
 use App\Livewire\NuevaProduccion;
 use App\Livewire\NuevaRuta;
 use App\Livewire\NuevoPedido;
@@ -116,7 +115,6 @@ Route::middleware('auth')->group(function () {
 
     Route::livewire('/reportes', Reportes\Index::class)->name('reportes.index')->middleware('modulo:reportes.index');
     Route::livewire('/descuentos', Descuentos\Index::class)->name('descuentos.index')->middleware('modulo:descuentos.index');
-    Route::livewire('/notificaciones', Notificaciones\Index::class)->name('notificaciones.index');
 
     Route::livewire('/usuarios', Usuarios\Index::class)->name('usuarios.index')->middleware('admin');
 });

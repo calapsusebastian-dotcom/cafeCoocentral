@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Models\Cliente;
 use App\Models\Descuento;
 use App\Models\MovimientoInventario;
-use App\Models\Notificacion;
 use App\Models\Pedido;
 use App\Models\PedidoItem;
 use App\Models\Producto;
@@ -77,7 +76,7 @@ class EditarPedido extends Component
     public function mount(Pedido $pedido): void
     {
         if ($this->bloquearSoloLectura()) {
-            $this->redirectRoute('notificaciones.index');
+            $this->redirectRoute('pedidos.index');
 
             return;
         }
@@ -476,12 +475,6 @@ class EditarPedido extends Component
                 'status' => $this->status,
             ]);
 
-            Notificacion::create([
-                'user_id' => $vendedor->id,
-                'titulo' => 'Pedido actualizado',
-                'mensaje' => "Se actualizó el pedido #{$this->numero} de {$cliente->nombre}.",
-                'tipo' => 'pedido',
-            ]);
         });
 
         session()->flash('success', "Pedido #{$this->numero} actualizado correctamente.");

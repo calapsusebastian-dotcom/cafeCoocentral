@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\Cliente;
-use App\Models\Notificacion;
 use App\Models\Producto;
 use App\Models\Ruta;
 use App\Models\RutaCliente;
@@ -472,12 +471,6 @@ class EditarRuta extends Component
                 'notas' => $this->notas,
             ]);
 
-            Notificacion::create([
-                'user_id' => Auth::id(),
-                'titulo' => 'Ruta actualizada',
-                'mensaje' => "Se actualizó la ruta #{$this->numero}.",
-                'tipo' => 'sistema',
-            ]);
         });
 
         session()->flash('success', "Ruta #{$this->numero} actualizada correctamente.");

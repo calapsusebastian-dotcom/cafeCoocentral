@@ -4,7 +4,6 @@ namespace App\Livewire\PedidosBodega;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
-use App\Models\Notificacion;
 use App\Models\PedidoBodega;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
@@ -109,12 +108,6 @@ class Index extends Component
                 'recibido_at' => now(),
             ]);
 
-            Notificacion::create([
-                'user_id' => $vendedor->id,
-                'titulo' => 'Pedido a bodega recibido',
-                'mensaje' => "Se recibió el pedido #{$pedido->numero} de {$pedido->bodega->nombre} y se actualizó el inventario.",
-                'tipo' => 'stock',
-            ]);
         });
 
         session()->flash('success', "Pedido #{$pedido->numero} marcado como recibido. Inventario actualizado.");

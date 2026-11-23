@@ -4,7 +4,6 @@ namespace App\Livewire\Produccion;
 
 use App\Livewire\Concerns\GuardaSoloLectura;
 use App\Models\MovimientoInventario;
-use App\Models\Notificacion;
 use App\Models\Produccion;
 use App\Models\Producto;
 use Illuminate\Support\Facades\Auth;
@@ -139,12 +138,6 @@ class Index extends Component
                 'trasladado_at' => now(),
             ]);
 
-            Notificacion::create([
-                'user_id' => $usuario->id,
-                'titulo' => 'Producción trasladada',
-                'mensaje' => "La producción #{$produccion->numero} fue trasladada (IMOV {$this->numero_imov}) y se actualizó el inventario.",
-                'tipo' => 'stock',
-            ]);
         });
 
         session()->flash('success', "Producción #{$produccion->numero} trasladada correctamente. Inventario actualizado.");
