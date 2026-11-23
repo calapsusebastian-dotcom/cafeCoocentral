@@ -23,7 +23,7 @@ class NotificationBell extends Component
 
     public function verificarNuevas(): void
     {
-        $nuevas = Notificacion::where('id', '>', $this->lastSeenId)->orderBy('id')->get();
+        $nuevas = Notificacion::where('id', '>', $this->lastSeenId)->orderBy('id')->limit(20)->get();
 
         if ($nuevas->isEmpty()) {
             return;
