@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportarRutasController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Bodegas;
 use App\Livewire\Clientes;
@@ -73,6 +74,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('modulo:rutas.index')->group(function () {
         Route::livewire('/rutas', Rutas\Index::class)->name('rutas.index');
+        Route::get('/rutas/exportar', ExportarRutasController::class)->name('rutas.exportar');
         Route::livewire('/rutas/nueva', NuevaRuta::class)->name('rutas.nueva');
         Route::livewire('/rutas/{ruta}/editar', EditarRuta::class)->name('rutas.editar');
         Route::get('/rutas/{ruta}/imprimir', function (Ruta $ruta) {

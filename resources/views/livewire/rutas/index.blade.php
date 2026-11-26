@@ -1,11 +1,16 @@
-@unless (auth()->user()->solo_lectura)
-    <x-slot:headerActions>
+<x-slot:headerActions>
+    <a href="{{ route('rutas.exportar') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+        <x-heroicon-o-arrow-down-tray class="w-4 h-4" />
+        Descargar rutas
+    </a>
+
+    @unless (auth()->user()->solo_lectura)
         <a href="{{ route('rutas.nueva') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors">
             <x-heroicon-o-plus class="w-4 h-4" />
             Nueva ruta
         </a>
-    </x-slot:headerActions>
-@endunless
+    @endunless
+</x-slot:headerActions>
 
 <div>
     @if (session('success'))
